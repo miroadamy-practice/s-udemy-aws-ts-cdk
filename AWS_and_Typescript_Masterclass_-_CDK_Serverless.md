@@ -294,7 +294,22 @@ CDKToolkit: creating CloudFormation changeset...
 
 ```
 
+See the fine tuned lamdda - <https://github.com/miroadamy/s-udemy-aws-ts-cdk/commit/434c3dfdf3331817d79c9847b115b5facfdc5de0>
+
 ## 04 - Serverless - AWS Lambda, bundling, testing etc
+
+Create new Lambda in services/hello
+
+All lambdas is JS for now
+
+Using env for the App
+
+```typescript
+new SpaceStack(app, "Space-Finder-Backend", {
+  stackName: "SpaceFinder",
+  env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+});
+```
 
 ---
 
