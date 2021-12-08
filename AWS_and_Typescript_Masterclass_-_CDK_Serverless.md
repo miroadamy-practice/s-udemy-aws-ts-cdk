@@ -59,6 +59,45 @@ CfnParameter
 
 # 03 - Serverless project with CDK and TS
 
+Doing from scratch.
+
+The code in in `./FrontEnd` and `./BackEnd`
+
+My code: 
+
+* cdk-front-end
+* cdk-back-end
+
+```
+
+$ nvm
+🚨 NVM not loaded! Loading now...
+
+Node Version Manager (v0.35.2)
+
+➜  s-udemy-aws-ts-cdk nvm use default
+Now using node v16.13.1 (npm v8.1.2)
+➜  s-udemy-aws-ts-cdk cdk --version
+2.0.0 (build 4b6ce31)
+
+➜  cdk-back-end git:(master) ✗ npm init -y
+Wrote to /Users/miroadamy/prj/s-udemy-aws-ts-cdk/cdk-back-end/package.json:
+
+{
+  "name": "cdk-back-end",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+
+
+
 
 # 04 - Serverless - AWS Lambda, bundling, testing etc
 
