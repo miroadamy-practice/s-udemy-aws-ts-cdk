@@ -389,7 +389,16 @@ Can hit it on <https://67183kcdkf.execute-api.eu-central-1.amazonaws.com/prod/he
 
 Install 'Rest Client' extension
 
+### Adding DynamoDB
 
+We use separate class => see `GenericTable.ts`
+
+```bash
+➜  cdk-back-end git:(master) ✗ cdk diff
+Stack Space-Finder-Backend (SpaceFinder)
+Resources
+[+] AWS::DynamoDB::Table SpacesTable SpacesTable8A997355 
+```
 ---
 
 ## 14 - TS recap
