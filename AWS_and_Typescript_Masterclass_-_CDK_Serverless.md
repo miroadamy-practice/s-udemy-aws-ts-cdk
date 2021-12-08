@@ -311,6 +311,85 @@ new SpaceStack(app, "Space-Finder-Backend", {
 });
 ```
 
+### Adding API GW
+
+Have to create: API GW, Integration and Resource:
+
+```typescript
+    const helloLambda = new LambdaFunction(this, 'helloLambda', {
+        runtime: Runtime.NODEJS_14_X,
+        code: Code.fromAsset(join(__dirname, '..', 'services', 'hello')),
+        handler: 'hello.main'   // name of file.exported function
+    });
+
+    const helloLambdaIntegration = new LambdaIntegration(helloLambda);
+    const helloLambdaResource = this.api.root.addResource('hello');
+    helloLambdaResource.addMethod('GET', helloLambdaIntegration);
+```
+
+CDK diff
+
+```bash
+➜  cdk-back-end git:(master) cdk diff
+Stack Space-Finder-Backend (SpaceFinder)
+IAM Statement Changes
+┌───┬───────────────────────────────┬────────┬───────────────────────────────┬───────────────────────────────┬──────────────────────────────────┐
+│   │ Resource                      │ Effect │ Action                        │ Principal                     │ Condition                        │
+├───┼───────────────────────────────┼────────┼───────────────────────────────┼───────────────────────────────┼──────────────────────────────────┤
+│ + │ ${SpaceApi/CloudWatchRole.Arn │ Allow  │ sts:AssumeRole                │ Service:apigateway.amazonaws. │                                  │
+│   │ }                             │        │                               │ com                           │                                  │
+├───┼───────────────────────────────┼────────┼───────────────────────────────┼───────────────────────────────┼──────────────────────────────────┤
+│ + │ ${helloLambda.Arn}            │ Allow  │ lambda:InvokeFunction         │ Service:apigateway.amazonaws. │ "ArnLike": {                     │
+│   │                               │        │                               │ com                           │   "AWS:SourceArn": "arn:${AWS::P │
+│   │                               │        │                               │                               │ artition}:execute-api:eu-central │
+│   │                               │        │                               │                               │ -1:469225108435:${SpaceApi1B373D │
+│   │                               │        │                               │                               │ 2B}/${SpaceApi/DeploymentStage.p │
+│   │                               │        │                               │                               │ rod}/GET/hello"                  │
+│   │                               │        │                               │                               │ }                                │
+│ + │ ${helloLambda.Arn}            │ Allow  │ lambda:InvokeFunction         │ Service:apigateway.amazonaws. │ "ArnLike": {                     │
+│   │                               │        │                               │ com                           │   "AWS:SourceArn": "arn:${AWS::P │
+│   │                               │        │                               │                               │ artition}:execute-api:eu-central │
+│   │                               │        │                               │                               │ -1:469225108435:${SpaceApi1B373D │
+│   │                               │        │                               │                               │ 2B}/test-invoke-stage/GET/hello" │
+│   │                               │        │                               │                               │ }                                │
+└───┴───────────────────────────────┴────────┴───────────────────────────────┴───────────────────────────────┴──────────────────────────────────┘
+IAM Policy Changes
+┌───┬────────────────────────────┬─────────────────────────────────────────────────────────────────────────────────────────┐
+│   │ Resource                   │ Managed Policy ARN                                                                      │
+├───┼────────────────────────────┼─────────────────────────────────────────────────────────────────────────────────────────┤
+│ + │ ${SpaceApi/CloudWatchRole} │ arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs │
+└───┴────────────────────────────┴─────────────────────────────────────────────────────────────────────────────────────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+Resources
+[+] AWS::ApiGateway::RestApi SpaceApi SpaceApi1B373D2B 
+[+] AWS::IAM::Role SpaceApi/CloudWatchRole SpaceApiCloudWatchRole2811DDE0 
+[+] AWS::ApiGateway::Account SpaceApi/Account SpaceApiAccount1ADAEF20 
+[+] AWS::ApiGateway::Deployment SpaceApi/Deployment SpaceApiDeploymentA2B9E765d1b3468b12a7ee6817a725a57573835e 
+[+] AWS::ApiGateway::Stage SpaceApi/DeploymentStage.prod SpaceApiDeploymentStageprodBB8A31FE 
+[+] AWS::ApiGateway::Resource SpaceApi/Default/hello SpaceApihelloDF776653 
+[+] AWS::Lambda::Permission SpaceApi/Default/hello/GET/ApiPermission.SpaceFinderBackendSpaceApiE9BB53FF.GET..hello SpaceApihelloGETApiPermissionSpaceFinderBackendSpaceApiE9BB53FFGEThelloC5CE7BCC 
+[+] AWS::Lambda::Permission SpaceApi/Default/hello/GET/ApiPermission.Test.SpaceFinderBackendSpaceApiE9BB53FF.GET..hello SpaceApihelloGETApiPermissionTestSpaceFinderBackendSpaceApiE9BB53FFGEThelloD20E1DAA 
+[+] AWS::ApiGateway::Method SpaceApi/Default/hello/GET SpaceApihelloGET65983C27 
+
+Outputs
+[+] Output SpaceApi/Endpoint SpaceApiEndpointDA7E4050: {"Value":{"Fn::Join":["",["https://",{"Ref":"SpaceApi1B373D2B"},".execute-api.eu-central-1.",{"Ref":"AWS::URLSuffix"},"/",{"Ref":"SpaceApiDeploymentStageprodBB8A31FE"},"/"]]}}
+
+---
+# On deploy:
+
+Outputs:
+Space-Finder-Backend.SpaceApiEndpointDA7E4050 = https://67183kcdkf.execute-api.eu-central-1.amazonaws.com/prod/
+
+Stack ARN:
+arn:aws:cloudformation:eu-central-1:469225108435:stack/SpaceFinder/5eea0820-5870-11ec-a226-061d7a8cfc38
+```
+
+Can hit it on <https://67183kcdkf.execute-api.eu-central-1.amazonaws.com/prod/hello>
+
+Install 'Rest Client' extension
+
+
 ---
 
 ## 14 - TS recap
