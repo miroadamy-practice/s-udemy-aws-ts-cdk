@@ -1,0 +1,28 @@
+@endpoint = https://v1brla82hd.execute-api.eu-west-1.amazonaws.com/prod
+
+GET {{endpoint}}/spaces/
+###
+
+GET {{endpoint}}/spaces?spaceId=64c87073-5ffe-4cbd-b867-2645b91fccde
+###
+
+POST {{endpoint}}/spaces/
+Content-Type: application/json
+
+{
+    "location": "Londonzzz",
+    "name": "Best locationzzz"
+}
+###
+
+PUT {{endpoint}}/spaces?spaceId=64c87073-5ffe-4cbd-b867-2645b91fccde
+Content-Type: application/json
+
+{
+    "location": "Updated Location"
+}
+###
+
+DELETE  {{endpoint}}/spaces?spaceId=64c87073-5ffe-4cbd-b867-2645b91fccde
+###
+
