@@ -1,4 +1,4 @@
-import { SpaceStack, SpaceStack, SpaceStack } from "./SpaceStacks";
+import { SpaceStack } from "./SpaceStacks";
 
 import { App } from "aws-cdk-lib";
 
