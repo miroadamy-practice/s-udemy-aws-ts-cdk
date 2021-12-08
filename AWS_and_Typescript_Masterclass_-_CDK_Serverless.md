@@ -96,6 +96,19 @@ Wrote to /Users/miroadamy/prj/s-udemy-aws-ts-cdk/cdk-back-end/package.json:
   "license": "ISC"
 }
 
+➜  cdk-back-end git:(master) npm i -D aws-cdk aws-cdk-lib constructs ts-node typescript 
+
+added 216 packages, and audited 235 packages in 22s
+
+found 0 vulnerabilities
+➜  cdk-back-end git:(master) ✗ npm ls
+cdk-back-end@1.0.0 /Users/miroadamy/prj/s-udemy-aws-ts-cdk/cdk-back-end
+├── aws-cdk-lib@2.1.0
+├── aws-cdk@2.1.0
+├── constructs@10.0.10
+├── ts-node@10.4.0
+└── typescript@4.5.2
+
 
 
 
