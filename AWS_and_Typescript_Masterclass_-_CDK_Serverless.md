@@ -15,11 +15,11 @@ See [AWS & Typescript Masterclass - CDK, Serverless, React](https://www.udemy.co
 
 See `/Users/miroadamy/prj/s-udemy-aws-ts-cdk`
 
-## Intro
+## 01 Intro
 
 - See [https://www.udemy.com/course/aws-typescript-cdk-serverless-react/learn/lecture/27142980#overview](https://www.udemy.com/course/aws-typescript-cdk-serverless-react/learn/lecture/27142980#overview)
 
-## AWS CDK and CFN
+## 02 AWS CDK and CFN
 
 - See [https://www.udemy.com/course/aws-typescript-cdk-serverless-react/learn/lecture/27143048#overview](https://www.udemy.com/course/aws-typescript-cdk-serverless-react/learn/lecture/27143048#overview)
 
@@ -296,7 +296,7 @@ CDKToolkit: creating CloudFormation changeset...
 
 See the fine tuned lamdda - <https://github.com/miroadamy/s-udemy-aws-ts-cdk/commit/434c3dfdf3331817d79c9847b115b5facfdc5de0>
 
-## 04 - Serverless - AWS Lambda, bundling, testing etc
+### AWS Lambda
 
 Create new Lambda in services/hello
 
@@ -398,6 +398,39 @@ We use separate class => see `GenericTable.ts`
 Stack Space-Finder-Backend (SpaceFinder)
 Resources
 [+] AWS::DynamoDB::Table SpacesTable SpacesTable8A997355 
+```
+
+## 04 Lambda bundling, testing and debugging
+
+2 solutions shown: NodeLambda and webpack
+
+### The problems
+
+- how to deploy Lamdba dependencies
+- TS must be transpilled to JS
+
+### Deploy Lambdas
+
+- Monorepo: deploy the Node Modules => hard to discriminate between Lambdas
+- CDK construct - Node Lambda <https://docs.aws.amazon.com/cdk/api/latest/docs/aws-lambda-nodejs-readme.html>, uses esbuilder - <https://esbuild.github.io/>
+- Webpack - old, slow, difficult config
+
+### CDK Node Lambda
+See https://docs.aws.amazon.com/cdk/api/latest/docs/aws-lambda-nodejs-readme.html
+
+Install: `npm install --save-dev esbuild@0`
+
+Create new Lambda in TS: `cdk-back-end/services/node-lambda/hello.ts`
+
+```typescript
+
+```
+
+and add useless dependency:
+
+```bash
+npm i uuid
+npm i @types/uuid
 ```
 ---
 
