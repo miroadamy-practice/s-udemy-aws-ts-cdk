@@ -416,7 +416,8 @@ Resources
 - Webpack - old, slow, difficult config
 
 ### CDK Node Lambda
-See https://docs.aws.amazon.com/cdk/api/latest/docs/aws-lambda-nodejs-readme.html
+
+See <https://docs.aws.amazon.com/cdk/api/latest/docs/aws-lambda-nodejs-readme.html>
 
 Install: `npm install --save-dev esbuild@0`
 
@@ -570,6 +571,7 @@ fixed the ';'
 
 
 ```
+
 The YAML
 
 ```yaml
@@ -887,6 +889,199 @@ Resources
 [+] AWS::IAM::Role helloLambdaNodeJS/ServiceRole helloLambdaNodeJSServiceRole9951D888 
 [+] AWS::Lambda::Function helloLambdaNodeJS helloLambdaNodeJSAEFC0103 
 
+```
+
+## 05 - Testing and debugging
+
+### Logging
+
+- add console.log() calls
+- switch helloLambdaNodeJS to be attached to GW
+- deploy
+
+```bash
+➜  cdk-back-end git:(master) ✗ cdk diff
+Bundling asset Space-Finder-Backend/helloLambdaNodeJS/Code/Stage...
+yarn run v1.22.17
+warning ../../../package.json: No license field
+$ /Users/miroadamy/prj/s-udemy-aws-ts-cdk/cdk-back-end/node_modules/.bin/esbuild --bundle /Users/miroadamy/prj/s-udemy-aws-ts-cdk/cdk-back-end/services/node-lambda/hello.ts --target=node14 --platform=node --outfile=/Users/miroadamy/prj/s-udemy-aws-ts-cdk/cdk-back-end/cdk.out/bundling-temp-834a0c01115afbdf1ac9c13715df1d4783218baecef9e7a50258daf22ef0080e/index.js --external:aws-sdk
+
+  cdk.out/bundling-temp-834a0c01115afbdf1ac9c13715df1d4783218baecef9e7a50258daf22ef0080e/index.js  17.3kb
+
+✨  Done in 0.56s.
+Stack Space-Finder-Backend (SpaceFinder)
+IAM Statement Changes
+┌───┬───────────────────────────────┬────────┬───────────────────────────────┬───────────────────────────────┬─────────────────────────────────┐
+│   │ Resource                      │ Effect │ Action                        │ Principal                     │ Condition                       │
+├───┼───────────────────────────────┼────────┼───────────────────────────────┼───────────────────────────────┼─────────────────────────────────┤
+│ - │ ${helloLambda79DCE371.Arn}    │ Allow  │ lambda:InvokeFunction         │ Service:apigateway.amazonaws. │ "ArnLike": {                    │
+│   │                               │        │                               │ com                           │   "AWS:SourceArn": "arn:${AWS:: │
+│   │                               │        │                               │                               │ Partition}:execute-api:eu-centr │
+│   │                               │        │                               │                               │ al-1:469225108435:${SpaceApi1B3 │
+│   │                               │        │                               │                               │ 73D2B}/${SpaceApi/DeploymentSta │
+│   │                               │        │                               │                               │ ge.prod}/GET/hello"             │
+│   │                               │        │                               │                               │ }                               │
+│ - │ ${helloLambda79DCE371.Arn}    │ Allow  │ lambda:InvokeFunction         │ Service:apigateway.amazonaws. │ "ArnLike": {                    │
+│   │                               │        │                               │ com                           │   "AWS:SourceArn": "arn:${AWS:: │
+│   │                               │        │                               │                               │ Partition}:execute-api:eu-centr │
+│   │                               │        │                               │                               │ al-1:469225108435:${SpaceApi1B3 │
+│   │                               │        │                               │                               │ 73D2B}/test-invoke-stage/GET/he │
+│   │                               │        │                               │                               │ llo"                            │
+│   │                               │        │                               │                               │ }                               │
+├───┼───────────────────────────────┼────────┼───────────────────────────────┼───────────────────────────────┼─────────────────────────────────┤
+│ + │ ${helloLambdaNodeJS.Arn}      │ Allow  │ lambda:InvokeFunction         │ Service:apigateway.amazonaws. │ "ArnLike": {                    │
+│   │                               │        │                               │ com                           │   "AWS:SourceArn": "arn:${AWS:: │
+│   │                               │        │                               │                               │ Partition}:execute-api:eu-centr │
+│   │                               │        │                               │                               │ al-1:469225108435:${SpaceApi1B3 │
+│   │                               │        │                               │                               │ 73D2B}/${SpaceApi/DeploymentSta │
+│   │                               │        │                               │                               │ ge.prod}/GET/hello"             │
+│   │                               │        │                               │                               │ }                               │
+│ + │ ${helloLambdaNodeJS.Arn}      │ Allow  │ lambda:InvokeFunction         │ Service:apigateway.amazonaws. │ "ArnLike": {                    │
+│   │                               │        │                               │ com                           │   "AWS:SourceArn": "arn:${AWS:: │
+│   │                               │        │                               │                               │ Partition}:execute-api:eu-centr │
+│   │                               │        │                               │                               │ al-1:469225108435:${SpaceApi1B3 │
+│   │                               │        │                               │                               │ 73D2B}/test-invoke-stage/GET/he │
+│   │                               │        │                               │                               │ llo"                            │
+│   │                               │        │                               │                               │ }                               │
+└───┴───────────────────────────────┴────────┴───────────────────────────────┴───────────────────────────────┴─────────────────────────────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+Resources
+[-] AWS::ApiGateway::Deployment SpaceApiDeploymentA2B9E765d1b3468b12a7ee6817a725a57573835e destroy
+[-] AWS::IAM::Role helloLambdaServiceRoleBB046714 destroy
+[-] AWS::Lambda::Function helloLambda79DCE371 destroy
+[+] AWS::ApiGateway::Deployment SpaceApi/Deployment SpaceApiDeploymentA2B9E765d58b45fcd9803361a63f37d7c52e229f 
+[~] AWS::ApiGateway::Stage SpaceApi/DeploymentStage.prod SpaceApiDeploymentStageprodBB8A31FE 
+ └─ [~] DeploymentId
+     └─ [~] .Ref:
+         ├─ [-] SpaceApiDeploymentA2B9E765d1b3468b12a7ee6817a725a57573835e
+         └─ [+] SpaceApiDeploymentA2B9E765d58b45fcd9803361a63f37d7c52e229f
+[~] AWS::Lambda::Permission SpaceApi/Default/hello/GET/ApiPermission.SpaceFinderBackendSpaceApiE9BB53FF.GET..hello SpaceApihelloGETApiPermissionSpaceFinderBackendSpaceApiE9BB53FFGEThelloC5CE7BCC replace
+ └─ [~] FunctionName (requires replacement)
+     └─ [~] .Fn::GetAtt:
+         └─ @@ -1,4 +1,4 @@
+            [ ] [
+            [-]   "helloLambda79DCE371",
+            [+]   "helloLambdaNodeJSAEFC0103",
+            [ ]   "Arn"
+            [ ] ]
+[~] AWS::Lambda::Permission SpaceApi/Default/hello/GET/ApiPermission.Test.SpaceFinderBackendSpaceApiE9BB53FF.GET..hello SpaceApihelloGETApiPermissionTestSpaceFinderBackendSpaceApiE9BB53FFGEThelloD20E1DAA replace
+ └─ [~] FunctionName (requires replacement)
+     └─ [~] .Fn::GetAtt:
+         └─ @@ -1,4 +1,4 @@
+            [ ] [
+            [-]   "helloLambda79DCE371",
+            [+]   "helloLambdaNodeJSAEFC0103",
+            [ ]   "Arn"
+            [ ] ]
+[~] AWS::ApiGateway::Method SpaceApi/Default/hello/GET SpaceApihelloGET65983C27 
+ └─ [~] Integration
+     └─ [~] .Uri:
+         └─ [~] .Fn::Join:
+             └─ @@ -8,7 +8,7 @@
+                [ ] ":apigateway:eu-central-1:lambda:path/2015-03-31/functions/",
+                [ ] {
+                [ ]   "Fn::GetAtt": [
+                [-]     "helloLambda79DCE371",
+                [+]     "helloLambdaNodeJSAEFC0103",
+                [ ]     "Arn"
+                [ ]   ]
+                [ ] },
+[~] AWS::Lambda::Function helloLambdaNodeJS helloLambdaNodeJSAEFC0103 
+ ├─ [~] Code
+ │   └─ [~] .S3Key:
+ │       ├─ [-] b7ea4ac94ce3cdfdf5cf33d02a3554b58fe64e1f2be81a2389534450cd67232d.zip
+ │       └─ [+] 4816a4f9fda3f9450be0686e61772e1c5b092b28e172273c54b2b9b1ef24a3d4.zip
+ └─ [~] Metadata
+     └─ [~] .aws:asset:path:
+         ├─ [-] asset.b7ea4ac94ce3cdfdf5cf33d02a3554b58fe64e1f2be81a2389534450cd67232d
+         └─ [+] asset.4816a4f9fda3f9450be0686e61772e1c5b092b28e172273c54b2b9b1ef24a3d4
+
+
+cdk deploy
+```
+
+Deploy and hit it twice - via requests (the API GW did not change):
+
+```json
+2021-12-10T22:06:52.154Z 6a981304-fa4c-4427-9fca-ae0fd8f42a94 INFO 
+{
+  resource: '/hello',
+  path: '/hello',
+  httpMethod: 'GET',
+  headers: {
+    'Accept-Encoding': 'gzip, deflate',
+    'CloudFront-Forwarded-Proto': 'https',
+    'CloudFront-Is-Desktop-Viewer': 'true',
+    'CloudFront-Is-Mobile-Viewer': 'false',
+    'CloudFront-Is-SmartTV-Viewer': 'false',
+    'CloudFront-Is-Tablet-Viewer': 'false',
+    'CloudFront-Viewer-Country': 'SK',
+    Host: '67183kcdkf.execute-api.eu-central-1.amazonaws.com',
+    'User-Agent': 'vscode-restclient',
+    Via: '1.1 d84412fe91532b74b0fb5833b7857e01.cloudfront.net (CloudFront)',
+    'X-Amz-Cf-Id': 'KMELoG1OZ6suq4lBIEKXZoU26D9zC6s9FPXo_1KRTnhjJlbHkpntZw==',
+    'X-Amzn-Trace-Id': 'Root=1-61b3cf7b-27d769be767c3b741a28f298',
+    'X-Forwarded-For': '95.102.108.75, 130.176.34.83',
+    'X-Forwarded-Port': '443',
+    'X-Forwarded-Proto': 'https'
+  },
+  multiValueHeaders: {
+    'Accept-Encoding': [ 'gzip, deflate' ],
+    'CloudFront-Forwarded-Proto': [ 'https' ],
+    'CloudFront-Is-Desktop-Viewer': [ 'true' ],
+    'CloudFront-Is-Mobile-Viewer': [ 'false' ],
+    'CloudFront-Is-SmartTV-Viewer': [ 'false' ],
+    'CloudFront-Is-Tablet-Viewer': [ 'false' ],
+    'CloudFront-Viewer-Country': [ 'SK' ],
+    Host: [ '67183kcdkf.execute-api.eu-central-1.amazonaws.com' ],
+    'User-Agent': [ 'vscode-restclient' ],
+    Via: [
+      '1.1 d84412fe91532b74b0fb5833b7857e01.cloudfront.net (CloudFront)'
+    ],
+    'X-Amz-Cf-Id': [ 'KMELoG1OZ6suq4lBIEKXZoU26D9zC6s9FPXo_1KRTnhjJlbHkpntZw==' ],
+    'X-Amzn-Trace-Id': [ 'Root=1-61b3cf7b-27d769be767c3b741a28f298' ],
+    'X-Forwarded-For': [ '95.102.108.75, 130.176.34.83' ],
+    'X-Forwarded-Port': [ '443' ],
+    'X-Forwarded-Proto': [ 'https' ]
+  },
+  queryStringParameters: null,
+  multiValueQueryStringParameters: null,
+  pathParameters: null,
+  stageVariables: null,
+  requestContext: {
+    resourceId: 'lpcuyd',
+    resourcePath: '/hello',
+    httpMethod: 'GET',
+    extendedRequestId: 'KJ1bYEs1liAFcmQ=',
+    requestTime: '10/Dec/2021:22:06:51 +0000',
+    path: '/prod/hello',
+    accountId: '469225108435',
+    protocol: 'HTTP/1.1',
+    stage: 'prod',
+    domainPrefix: '67183kcdkf',
+    requestTimeEpoch: 1639174011809,
+    requestId: '5162c577-f95c-40ea-8fc7-4cd1eba19c1e',
+    identity: {
+      cognitoIdentityPoolId: null,
+      accountId: null,
+      cognitoIdentityId: null,
+      caller: null,
+      sourceIp: '95.102.108.75',
+      principalOrgId: null,
+      accessKey: null,
+      cognitoAuthenticationType: null,
+      cognitoAuthenticationProvider: null,
+      userArn: null,
+      userAgent: 'vscode-restclient',
+      user: null
+    },
+    domainName: '67183kcdkf.execute-api.eu-central-1.amazonaws.com',
+    apiId: '67183kcdkf'
+  },
+  body: null,
+  isBase64Encoded: false
+}
 ```
 
 ---
