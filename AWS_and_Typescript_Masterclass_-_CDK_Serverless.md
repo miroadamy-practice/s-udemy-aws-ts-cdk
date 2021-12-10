@@ -1084,6 +1084,90 @@ Deploy and hit it twice - via requests (the API GW did not change):
 }
 ```
 
+See the tag '05-logs'
+
+### Using the AWS SDK
+
+Install - `npm install aws-sdk`
+
+Using s3client to list buckets, also must add policy to allow it
+
+```typescript
+    const s3ListPolicy = new PolicyStatement();
+    s3ListPolicy.addActions('s3:ListAllMyBuckets');
+    s3ListPolicy.addResources('*');
+    helloLambdaNodeJs.addToRolePolicy(s3ListPolicy);
+
+---
+
+import {S3} from 'aws-sdk';
+
+const s3client = new S3();
+
+async function handler(event: any, context: any) {
+
+    const buckets = await s3client.listBuckets().promise();
+    console.log('Got an event:');
+    console.log(event);
+    return {
+        statusCode: 200,
+        body: 'Hello from TS Lambda - here are your buckets:' + JSON.stringify(buckets.Buckets)
+    }
+}
+
+export { handler }
+```
+
+Diff:
+
+```text
+Stack Space-Finder-Backend (SpaceFinder)
+IAM Statement Changes
+┌───┬──────────┬────────┬─────────────────────┬──────────────────────────────────────┬───────────┐
+│   │ Resource │ Effect │ Action              │ Principal                            │ Condition │
+├───┼──────────┼────────┼─────────────────────┼──────────────────────────────────────┼───────────┤
+│ + │ *        │ Allow  │ s3:ListAllMyBuckets │ AWS:${helloLambdaNodeJS/ServiceRole} │           │
+└───┴──────────┴────────┴─────────────────────┴──────────────────────────────────────┴───────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+Resources
+[+] AWS::IAM::Policy helloLambdaNodeJS/ServiceRole/DefaultPolicy helloLambdaNodeJSServiceRoleDefaultPolicy8628AD89 
+[~] AWS::Lambda::Function helloLambdaNodeJS helloLambdaNodeJSAEFC0103 
+ ├─ [~] Code
+ │   └─ [~] .S3Key:
+ │       ├─ [-] 4816a4f9fda3f9450be0686e61772e1c5b092b28e172273c54b2b9b1ef24a3d4.zip
+ │       └─ [+] 407c12f0deaab996229a48e89884d0daadde046fa7000d0c3022181bcca8e66d.zip
+ ├─ [~] DependsOn
+ │   └─ @@ -1,3 +1,4 @@
+ │      [ ] [
+ │      [+]   "helloLambdaNodeJSServiceRoleDefaultPolicy8628AD89",
+ │      [ ]   "helloLambdaNodeJSServiceRole9951D888"
+ │      [ ] ]
+ └─ [~] Metadata
+     └─ [~] .aws:asset:path:
+         ├─ [-] asset.4816a4f9fda3f9450be0686e61772e1c5b092b28e172273c54b2b9b1ef24a3d4
+         └─ [+] asset.407c12f0deaab996229a48e89884d0daadde046fa7000d0c3022181bcca8e66d
+
+---
+
+RESPONSE
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 4760
+Connection: close
+Date: Fri, 10 Dec 2021 22:40:58 GMT
+x-amzn-RequestId: 66a51be5-0be4-4506-8c89-920b2c64c34c
+x-amz-apigw-id: KJ6a4EitliAFldQ=
+X-Amzn-Trace-Id: Root=1-61b3d778-419da3986210585e756c670f;Sampled=0
+X-Cache: Miss from cloudfront
+Via: 1.1 bef2aa0a3399e7cf217d61d0ac883834.cloudfront.net (CloudFront)
+X-Amz-Cf-Pop: BUD50-C1
+X-Amz-Cf-Id: LcU1RxMbZtlB5m6DYPD5NZPEoJhQUywgPwX8WRC8fpe5CwYcyhwTsA==
+
+Hello from TS Lambda - here are your buckets:[{"Name":"atmosphere-docs-publisher-pipelinebucket-13584wbaypu4a","CreationDate":"2020-06-30T11:27:11.000Z"},{"Name":"atmosphere-docs-publisher-stack-pipelinebucket-1vkzhpuffn3jw","CreationDate":"2020-06-30T11:27:11.000Z"},{"Name":"atmosphere.pe.reliant.net","CreationDate":"2020-06-30T11:27:11.000Z"},{"Name":"aws-000000-cloudtrail-bucket-469225108435","CreationDate":"2021-01-08T21:01:54.000Z"},{"Name":"aws-000000-dev-pfi-s3-cloudtrail-f993c42d5d94","CreationDate":"2019-05-27T17:02:54.000Z"},{"Name":"aws-000000-staging-s3-cloudtrail-d55ae2714f32","CreationDate":"2019-11-04T18:36:46.000Z"},{"Name":"aws-000000-test-trailbucket-xacajphh2n49","CreationDate":"2020-03-23T03:01:58.000Z"},{"Name":"aws-codestar-ca-central-1-469225108435","CreationDate":"2019-12-16T19:01:02.000Z"},{"Name":"aws-codestar-ca-central-1-469225108435-test-codestar-pipe","CreationDate":"2019-12-16T19:04:39.000Z"},{"Name":"aws-perspective-accesslogsbucket-2rkkn8cb3w6p","CreationDate":"2020-10-05T13:39:19.000Z"},{"Name":"aws-sam-cli-managed-default-samclisourcebucket-le1tzalhcdcv","CreationDate":"2021-11-27T17:45:26.000Z"},{"Name":"aws-stackset-drift-detec-serverlessdeploymentbuck-1i3jcfyd3g7wf","CreationDate":"2020-10-15T20:05:54.000Z"},{"Name":"cdk-hnb659fds-assets-469225108435-eu-central-1","CreationDate":"2021-12-08T18:11:49.000Z"},{"Name":"cdktoolkit-stagingbucket-o66kpow1db31","CreationDate":"2021-12-08T18:12:09.000Z"},{"Name":"cf-templates-cod90gs5ld9b-ca-central-1","CreationDate":"2020-03-13T14:14:33.000Z"},{"Name":"cf-templates-cod90gs5ld9b-us-east-1","CreationDate":"2020-07-01T04:49:53.000Z"},{"Name":"cf-templates-cod90gs5ld9b-us-east-2","CreationDate":"2020-03-18T19:57:30.000Z"},{"Name":"cf-templates-cod90gs5ld9b-us-west-1","CreationDate":"2020-03-31T00:57:52.000Z"},{"Name":"cfn-test-bucket-000","CreationDate":"2020-03-13T15:48:07.000Z"},{"Name":"codepipeline-us-east-1-707035415740","CreationDate":"2020-07-02T02:17:25.000Z"},{"Name":"codesuite-demo-lambdacopy-11u5l3eh1ge-localbucket-cxwcqqtyx205","CreationDate":"2020-06-26T05:03:59.000Z"},{"Name":"codesuite-demo-pipeline-k1nrvleque-artifactbucket-18p2zu2q87y6","CreationDate":"2020-06-26T05:04:01.000Z"},{"Name":"config-bucket-469225108435","CreationDate":"2020-06-05T04:19:35.000Z"},{"Name":"config-bucket-469225108435-manual","CreationDate":"2020-03-17T21:11:10.000Z"},{"Name":"config-bucket-ca-central-1-469225108435","CreationDate":"2021-01-08T21:02:17.000Z"},{"Name":"config-bucket-us-east-1-469225108435","CreationDate":"2021-01-08T21:01:59.000Z"},{"Name":"config-bucket-us-west-2-469225108435","CreationDate":"2021-01-08T21:02:34.000Z"},{"Name":"ct-bucket-469225108435","CreationDate":"2020-07-02T07:42:38.000Z"},{"Name":"dive-personalize-events-1","CreationDate":"2020-07-02T12:47:23.000Z"},{"Name":"docs.atmosphere.pe.reliant.net","CreationDate":"2020-07-02T13:21:16.000Z"},{"Name":"global-s3-logs-logs-20191108132607049200000001","CreationDate":"2019-11-12T19:30:19.000Z"},{"Name":"logs-000000","CreationDate":"2020-01-03T21:43:47.000Z"},{"Name":"logs-pvtr","CreationDate":"2019-11-13T20:02:40.000Z"},{"Name":"logzio-aws-serverless-test","CreationDate":"2020-10-16T20:11:08.000Z"},{"Name":"pe.reliant.net","CreationDate":"2020-07-06T21:45:10.000Z"},{"Name":"pvtr-logs","CreationDate":"2019-11-17T02:23:36.000Z"},{"Name":"resources-pckg-dev-serverlessdeploymentbucket-10scqkldy24f0","CreationDate":"2020-07-07T06:14:34.000Z"},{"Name":"resources-pckg-nothing-serverlessdeploymentbucket-1v1djcsazikhi","CreationDate":"2020-07-07T06:14:34.000Z"},{"Name":"saas-identity-with-cognito-iden-destinationbucket-urhlxpa7zsyf","CreationDate":"2020-06-27T22:39:20.000Z"},{"Name":"saas-identity-with-cognito-identit-artifactbucket-jyn1g3ocz6j0","CreationDate":"2020-06-27T22:39:23.000Z"},{"Name":"session-manager-logs-469225108435","CreationDate":"2020-06-27T23:36:24.000Z"},{"Name":"signup-dev.hv3.xyz","CreationDate":"2020-07-07T13:50:45.000Z"},{"Name":"stackset-my-stack-set-65e20d00-69b9-configbucket-wpivuvqt55kw","CreationDate":"2021-01-08T21:18:09.000Z"},{"Name":"stackset-my-stack-set-a1be8021-0bf0-configbucket-1297xtwlma389","CreationDate":"2021-01-08T21:18:49.000Z"},{"Name":"stackset-my-stack-set-cc887279-e71f-configbucket-p63zdl4r2lew","CreationDate":"2021-01-08T21:19:33.000Z"},{"Name":"stackset-stacksetoverrideandupdatetes-trailbucket-1p8qnz3a0vdx3","CreationDate":"2020-06-11T15:07:35.000Z"},{"Name":"test-automation-scripts","CreationDate":"2020-04-21T19:09:37.000Z"},{"Name":"test-ct-stack-trailbucket-v32pu3w2pg3a","CreationDate":"2020-03-31T01:00:17.000Z"},{"Name":"test-no-tag-bucket-1","CreationDate":"2020-08-31T17:44:39.000Z"},{"Name":"test-s3-sys-testcustomer-20201207175115286500000003","CreationDate":"2020-12-07T17:51:18.000Z"}]
+```
+
 ---
 
 ## 14 - TS recap
