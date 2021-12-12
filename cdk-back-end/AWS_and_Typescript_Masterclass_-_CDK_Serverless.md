@@ -1251,6 +1251,15 @@ cdk-back-end@1.0.0 /Users/miroadamy/prj/s-udemy-aws-ts-cdk/cdk-back-end
 
 ```
 
+### Issue and the solution
+
+The problem seems to be that unlees the .vscode and node_modules are not at the same level in the project, the VS Code does not load the packages correctly. It is not specific to ts-node, it is not related to whether the module is locally or globally installed.
+
+As soon as I created VS Code project that starts from `cdk-back-end`, moved the lauch.json into that subfolder, local debugging works like charm
+
+See the tag `05-local-debugging`
+
+
 ---
 
 ## 14 - TS recap
