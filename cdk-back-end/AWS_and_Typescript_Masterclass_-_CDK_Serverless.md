@@ -1168,6 +1168,89 @@ X-Amz-Cf-Id: LcU1RxMbZtlB5m6DYPD5NZPEoJhQUywgPwX8WRC8fpe5CwYcyhwTsA==
 Hello from TS Lambda - here are your buckets:[{"Name":"atmosphere-docs-publisher-pipelinebucket-13584wbaypu4a","CreationDate":"2020-06-30T11:27:11.000Z"},{"Name":"atmosphere-docs-publisher-stack-pipelinebucket-1vkzhpuffn3jw","CreationDate":"2020-06-30T11:27:11.000Z"},{"Name":"atmosphere.pe.reliant.net","CreationDate":"2020-06-30T11:27:11.000Z"},{"Name":"aws-000000-cloudtrail-bucket-469225108435","CreationDate":"2021-01-08T21:01:54.000Z"},{"Name":"aws-000000-dev-pfi-s3-cloudtrail-f993c42d5d94","CreationDate":"2019-05-27T17:02:54.000Z"},{"Name":"aws-000000-staging-s3-cloudtrail-d55ae2714f32","CreationDate":"2019-11-04T18:36:46.000Z"},{"Name":"aws-000000-test-trailbucket-xacajphh2n49","CreationDate":"2020-03-23T03:01:58.000Z"},{"Name":"aws-codestar-ca-central-1-469225108435","CreationDate":"2019-12-16T19:01:02.000Z"},{"Name":"aws-codestar-ca-central-1-469225108435-test-codestar-pipe","CreationDate":"2019-12-16T19:04:39.000Z"},{"Name":"aws-perspective-accesslogsbucket-2rkkn8cb3w6p","CreationDate":"2020-10-05T13:39:19.000Z"},{"Name":"aws-sam-cli-managed-default-samclisourcebucket-le1tzalhcdcv","CreationDate":"2021-11-27T17:45:26.000Z"},{"Name":"aws-stackset-drift-detec-serverlessdeploymentbuck-1i3jcfyd3g7wf","CreationDate":"2020-10-15T20:05:54.000Z"},{"Name":"cdk-hnb659fds-assets-469225108435-eu-central-1","CreationDate":"2021-12-08T18:11:49.000Z"},{"Name":"cdktoolkit-stagingbucket-o66kpow1db31","CreationDate":"2021-12-08T18:12:09.000Z"},{"Name":"cf-templates-cod90gs5ld9b-ca-central-1","CreationDate":"2020-03-13T14:14:33.000Z"},{"Name":"cf-templates-cod90gs5ld9b-us-east-1","CreationDate":"2020-07-01T04:49:53.000Z"},{"Name":"cf-templates-cod90gs5ld9b-us-east-2","CreationDate":"2020-03-18T19:57:30.000Z"},{"Name":"cf-templates-cod90gs5ld9b-us-west-1","CreationDate":"2020-03-31T00:57:52.000Z"},{"Name":"cfn-test-bucket-000","CreationDate":"2020-03-13T15:48:07.000Z"},{"Name":"codepipeline-us-east-1-707035415740","CreationDate":"2020-07-02T02:17:25.000Z"},{"Name":"codesuite-demo-lambdacopy-11u5l3eh1ge-localbucket-cxwcqqtyx205","CreationDate":"2020-06-26T05:03:59.000Z"},{"Name":"codesuite-demo-pipeline-k1nrvleque-artifactbucket-18p2zu2q87y6","CreationDate":"2020-06-26T05:04:01.000Z"},{"Name":"config-bucket-469225108435","CreationDate":"2020-06-05T04:19:35.000Z"},{"Name":"config-bucket-469225108435-manual","CreationDate":"2020-03-17T21:11:10.000Z"},{"Name":"config-bucket-ca-central-1-469225108435","CreationDate":"2021-01-08T21:02:17.000Z"},{"Name":"config-bucket-us-east-1-469225108435","CreationDate":"2021-01-08T21:01:59.000Z"},{"Name":"config-bucket-us-west-2-469225108435","CreationDate":"2021-01-08T21:02:34.000Z"},{"Name":"ct-bucket-469225108435","CreationDate":"2020-07-02T07:42:38.000Z"},{"Name":"dive-personalize-events-1","CreationDate":"2020-07-02T12:47:23.000Z"},{"Name":"docs.atmosphere.pe.reliant.net","CreationDate":"2020-07-02T13:21:16.000Z"},{"Name":"global-s3-logs-logs-20191108132607049200000001","CreationDate":"2019-11-12T19:30:19.000Z"},{"Name":"logs-000000","CreationDate":"2020-01-03T21:43:47.000Z"},{"Name":"logs-pvtr","CreationDate":"2019-11-13T20:02:40.000Z"},{"Name":"logzio-aws-serverless-test","CreationDate":"2020-10-16T20:11:08.000Z"},{"Name":"pe.reliant.net","CreationDate":"2020-07-06T21:45:10.000Z"},{"Name":"pvtr-logs","CreationDate":"2019-11-17T02:23:36.000Z"},{"Name":"resources-pckg-dev-serverlessdeploymentbucket-10scqkldy24f0","CreationDate":"2020-07-07T06:14:34.000Z"},{"Name":"resources-pckg-nothing-serverlessdeploymentbucket-1v1djcsazikhi","CreationDate":"2020-07-07T06:14:34.000Z"},{"Name":"saas-identity-with-cognito-iden-destinationbucket-urhlxpa7zsyf","CreationDate":"2020-06-27T22:39:20.000Z"},{"Name":"saas-identity-with-cognito-identit-artifactbucket-jyn1g3ocz6j0","CreationDate":"2020-06-27T22:39:23.000Z"},{"Name":"session-manager-logs-469225108435","CreationDate":"2020-06-27T23:36:24.000Z"},{"Name":"signup-dev.hv3.xyz","CreationDate":"2020-07-07T13:50:45.000Z"},{"Name":"stackset-my-stack-set-65e20d00-69b9-configbucket-wpivuvqt55kw","CreationDate":"2021-01-08T21:18:09.000Z"},{"Name":"stackset-my-stack-set-a1be8021-0bf0-configbucket-1297xtwlma389","CreationDate":"2021-01-08T21:18:49.000Z"},{"Name":"stackset-my-stack-set-cc887279-e71f-configbucket-p63zdl4r2lew","CreationDate":"2021-01-08T21:19:33.000Z"},{"Name":"stackset-stacksetoverrideandupdatetes-trailbucket-1p8qnz3a0vdx3","CreationDate":"2020-06-11T15:07:35.000Z"},{"Name":"test-automation-scripts","CreationDate":"2020-04-21T19:09:37.000Z"},{"Name":"test-ct-stack-trailbucket-v32pu3w2pg3a","CreationDate":"2020-03-31T01:00:17.000Z"},{"Name":"test-no-tag-bucket-1","CreationDate":"2020-08-31T17:44:39.000Z"},{"Name":"test-s3-sys-testcustomer-20201207175115286500000003","CreationDate":"2020-12-07T17:51:18.000Z"}]
 ```
 
+### - Local debugging
+
+Needs ts-node lib install => executes TS code
+
+Add Debug configuration - manually created `.vscode/launch.json`
+
+```json
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Local file",
+            "runtimeArgs": [
+                "-r",
+                "ts-node/register"
+            ],
+            "args": [
+                "${relativeFile}"
+            ],
+            "env": {
+                "AWS_REGION":"eu-central-1"
+            }
+        }
+    ]
+}
+```
+
+Add test runner
+
+```typescript
+import {handler} from './../../cdk-back-end/services/node-lambda/hello'
+
+// call the lambda, permissions do not matter
+handler({}, {});
+
+```
+
+Getting error:
+
+```bash
+/usr/local/bin/node -r ts-node/register test/playground/Hello.test.ts}
+Process exited with code 1
+Uncaught Error: Cannot find module 'ts-node/register'
+Require stack:
+- internal/preload
+No debugger available, can not send 'variables'
+
+## ATTEMPT 1 - uninstall global ts-node
+
+➜  cdk-back-end git:(master) ✗ npm uninstall -g ts-node
+
+removed 16 packages, and audited 1 package in 329ms
+
+found 0 vulnerabilities
+➜  cdk-back-end git:(master) ✗ npm ls -g                                                
+/Users/miroadamy/.nvm/versions/node/v16.13.1/lib
+├── aws-cdk-lib@2.1.0
+├── aws-cdk@2.1.0
+├── constructs@10.0.10
+├── corepack@0.10.0
+├── esbuild@0.14.2
+├── npm@8.1.2
+├── typescript@4.5.2
+└── yarn@1.22.17
+
+➜  cdk-back-end git:(master) ✗ npm ls   
+cdk-back-end@1.0.0 /Users/miroadamy/prj/s-udemy-aws-ts-cdk/cdk-back-end
+├── @types/node@16.11.12
+├── @types/uuid@8.3.3
+├── aws-cdk-lib@2.1.0
+├── aws-cdk@2.1.0
+├── aws-sdk@2.1046.0
+├── constructs@10.0.10
+├── esbuild@0.14.2
+├── ts-node@10.4.0
+├── typescript@4.5.2
+└── uuid@8.3.2
+
+
+```
+
 ---
 
 ## 14 - TS recap
