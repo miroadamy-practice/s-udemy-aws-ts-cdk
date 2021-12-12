@@ -6,24 +6,6 @@
     "configurations": [
 
         {
-            "name": "ts-node",
-            "type": "node",
-            "request": "launch",
-            "args": [
-                "${relativeFile}"
-            ],
-            "runtimeArgs": [
-                "-r",
-                "ts-node/register"
-            ],
-            "cwd": "${workspaceRoot}",
-            "protocol": "inspector",
-            "internalConsoleOptions": "openOnSessionStart",
-            "env": {
-                "AWS_REGION":"eu-central-1"
-            }
-        },
-        {
             "type": "node",
             "request": "launch",
             "name": "Debug Local file",
