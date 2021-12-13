@@ -1,4 +1,10 @@
 import {handler} from './services/SpacesTable/Create'
 
 // call the lambda, permissions do not matter
-handler({} as any, {} as any);
+
+const event = {
+    body: {
+        location: 'Bratislava'
+    }
+}
+handler(event as any, {} as any);
