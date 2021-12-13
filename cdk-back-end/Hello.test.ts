@@ -1,4 +1,4 @@
-import {handler} from './services/node-lambda/hello'
+import {handler} from './services/SpacesTable/Create'
 
 // call the lambda, permissions do not matter
-handler({}, {});
+handler({} as any, {} as any);
