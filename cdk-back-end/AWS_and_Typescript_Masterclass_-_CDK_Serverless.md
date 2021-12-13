@@ -1259,7 +1259,61 @@ As soon as I created VS Code project that starts from `cdk-back-end`, moved the 
 
 See the tag `05-local-debugging`
 
+## 06 - DynamoDB Table with Lambdas
 
+We extend the Generic table to contain the link to Lambdas
+
+Use properties instead of tablename, primary key
+
+```typescript
+export interface TableProps {
+    createLambdaPath?: string,
+    readLambdaPath?: string,
+    updateLambdaPath?: string,
+    deleteLambdaPath?: string,
+    
+    tableName: string,
+    primaryKey: string
+}
+```
+
+Pass the lambda file names - assume the location of `services/SpacesTable`
+
+The GenericTable holds both the Lamdas (as NodeJsFunction) as well as integrations, creates both and exports integrations.
+
+See 06-lamda-deployed
+
+Add new test in requests:
+
+```text
+POST {{endpoint}}/spaces/
+Content-Type: application/json
+
+{
+    "location": "Valencia",
+    "name": "Best Oranges"
+}
+```
+and run it:
+
+```text
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 52
+Connection: close
+Date: Mon, 13 Dec 2021 23:55:29 GMT
+x-amzn-RequestId: 2f25f3a5-2c1e-4552-9f64-8f9f1e2dbb51
+x-amz-apigw-id: KT-JiGzQFiAFmBA=
+X-Amzn-Trace-Id: Root=1-61b7dd70-00499f56656ff286522e650b;Sampled=0
+X-Cache: Miss from cloudfront
+Via: 1.1 d70252a9a5db94138543e9a401c1f69b.cloudfront.net (CloudFront)
+X-Amz-Cf-Pop: BRU50-C1
+X-Amz-Cf-Id: Uaj-SpbIjE94MMp3RSBrzgTZx5N3hySaEYXE1MpRSd-V8SR3y8DiYw==
+
+"Created item: 87775a5d-9b2c-45ec-8923-c96944937766"
+```
+
+See tag 06-DynamoDB-create
 ---
 
 ## 14 - TS recap

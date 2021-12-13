@@ -12,7 +12,15 @@ export class SpaceStack extends Stack {
   // Initialize outside of constructor so that it can be used everywhere
 
   private api = new RestApi(this, 'SpaceApi');
-  private spacesTable = new GenericTable('SpacesTable', 'spaceId', this);
+  // private spacesTable = new GenericTable('SpacesTable', 'spaceId', this);
+
+  private spacesTable = new GenericTable(this, {
+      tableName: 'SpacesTable',
+      primaryKey: 'spaceId',
+
+      createLambdaPath: 'Create'
+
+  });
 
   constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props);
@@ -30,6 +38,7 @@ export class SpaceStack extends Stack {
     const helloLambdaResource = this.api.root.addResource('hello');
     helloLambdaResource.addMethod('GET', helloLambdaIntegration);
 
-   
+   const spaceResource = this.api.root.addResource('spaces');
+   spaceResource.addMethod('POST', this.spacesTable.createLambdaIntegration);
   }
 }
