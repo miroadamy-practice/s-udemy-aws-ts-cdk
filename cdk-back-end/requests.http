@@ -28,3 +28,7 @@ Content-Type: application/json
     "location": "Valencia",
     "name": "Turia"
 }
+
+###
+
+DELETE {{endpoint}}/spaces?spaceId=87775a5d-9b2c-45ec-8923-c96944937766
