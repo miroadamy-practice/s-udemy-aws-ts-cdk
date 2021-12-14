@@ -1630,6 +1630,131 @@ X-Amz-Cf-Id: TX8BMy32TLLzxnW2fxZN0vDW_bc76QbhcjLJ4L_OeFcqrcP7BB_Nnw==
 ```
 
 Saved as 06-secondary-index
+
+
+### Update
+
+- combination of queryParameter AND body
+
+```typescript
+async function handler (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
+
+    const result: APIGatewayProxyResult = {
+        statusCode: 200,
+        body: ''
+    }
+
+    const requestBody = typeof event.body == 'object' ? event.body : JSON.parse(event.body);
+    const spaceId = event.queryStringParameters?.[PRIMARY_KEY]
+
+    try {
+        if (requestBody && spaceId) {
+            const requestBodyKey = Object.keys(requestBody)[0];
+            const requestBodyValue = requestBody[requestBodyKey];
+
+            const updateResult = await dbClient.update({
+                TableName: TABLE_NAME,
+                Key: {
+                    [PRIMARY_KEY]: spaceId,
+                },
+                UpdateExpression: 'set #zzzNew = :new',
+                ExpressionAttributeNames: {
+                    '#zzzNew': requestBodyKey
+                },
+                ExpressionAttributeValues: {
+                    ':new': requestBodyValue
+                },
+                ReturnValues: 'UPDATED_NEW'
+
+            }).promise();
+            result.body = JSON.stringify(updateResult);
+        }
+        
+    } catch (error: any) {
+        result.statusCode = 501
+        result.body = error.message
+    }
+
+    return result;
+}
+
+
+```
+
+?? WHY this way - without brackets does not work:
+
+```text
+Key: {[PRIMARY_KEY]: spaceId},
+```
+
+The integration - add 
+
+```text
+Stack Space-Finder-Backend (SpaceFinder)
+IAM Statement Changes
+┌───┬────────────────────┬────────┬────────────────────┬────────────────────┬───────────────────────┐
+│   │ Resource           │ Effect │ Action             │ Principal          │ Condition             │
+├───┼────────────────────┼────────┼────────────────────┼────────────────────┼───────────────────────┤
+│ + │ ${SpacesTable.Arn} │ Allow  │ dynamodb:BatchWrit │ AWS:${SpacesTable- │                       │
+│   │ ${SpacesTable.Arn} │        │ eItem              │ Update/ServiceRole │                       │
+│   │ /index/*           │        │ dynamodb:DeleteIte │ }                  │                       │
+│   │                    │        │ m                  │                    │                       │
+│   │                    │        │ dynamodb:PutItem   │                    │                       │
+│   │                    │        │ dynamodb:UpdateIte │                    │                       │
+│   │                    │        │ m                  │                    │                       │
+├───┼────────────────────┼────────┼────────────────────┼────────────────────┼───────────────────────┤
+│ + │ ${SpacesTable-Upda │ Allow  │ lambda:InvokeFunct │ Service:apigateway │ "ArnLike": {          │
+│   │ te.Arn}            │        │ ion                │ .amazonaws.com     │   "AWS:SourceArn": "a │
+│   │                    │        │                    │                    │ rn:${AWS::Partition}: │
+│   │                    │        │                    │                    │ execute-api:eu-centra │
+│   │                    │        │                    │                    │ l-1:469225108435:${Sp │
+│   │                    │        │                    │                    │ aceApi1B373D2B}/${Spa │
+│   │                    │        │                    │                    │ ceApi/DeploymentStage │
+│   │                    │        │                    │                    │ .prod}/PUT/spaces"    │
+│   │                    │        │                    │                    │ }                     │
+│ + │ ${SpacesTable-Upda │ Allow  │ lambda:InvokeFunct │ Service:apigateway │ "ArnLike": {          │
+│   │ te.Arn}            │        │ ion                │ .amazonaws.com     │   "AWS:SourceArn": "a │
+│   │                    │        │                    │                    │ rn:${AWS::Partition}: │
+│   │                    │        │                    │                    │ execute-api:eu-centra │
+│   │                    │        │                    │                    │ l-1:469225108435:${Sp │
+│   │                    │        │                    │                    │ aceApi1B373D2B}/test- │
+│   │                    │        │                    │                    │ invoke-stage/PUT/spac │
+│   │                    │        │                    │                    │ es"                   │
+│   │                    │        │                    │                    │ }                     │
+├───┼────────────────────┼────────┼────────────────────┼────────────────────┼───────────────────────┤
+│ + │ ${SpacesTable-Upda │ Allow  │ sts:AssumeRole     │ Service:lambda.ama │                       │
+│   │ te/ServiceRole.Arn │        │                    │ zonaws.com         │                       │
+│   │ }                  │        │                    │                    │                       │
+└───┴────────────────────┴────────┴────────────────────┴────────────────────┴───────────────────────┘
+IAM Policy Changes
+┌───┬───────────────────────────────────────────────┬───────────────────────────────────────────────┐
+│   │ Resource                                      │ Managed Policy ARN                            │
+├───┼───────────────────────────────────────────────┼───────────────────────────────────────────────┤
+│ + │ ${SpacesTable-Update/ServiceRole}             │ arn:${AWS::Partition}:iam::aws:policy/service │
+│   │                                               │ -role/AWSLambdaBasicExecutionRole             │
+└───┴───────────────────────────────────────────────┴───────────────────────────────────────────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+Resources
+[-] AWS::ApiGateway::Deployment SpaceApiDeploymentA2B9E7650a1fc074a2fc5ed4e95ed4b54389cd85 destroy
+[+] AWS::ApiGateway::Deployment SpaceApi/Deployment SpaceApiDeploymentA2B9E76578d01c4db6a3368d7aa352f61ec7806c 
+[+] AWS::Lambda::Permission SpaceApi/Default/spaces/PUT/ApiPermission.SpaceFinderBackendSpaceApiE9BB53FF.PUT..spaces SpaceApispacesPUTApiPermissionSpaceFinderBackendSpaceApiE9BB53FFPUTspacesA742EF2B 
+[+] AWS::Lambda::Permission SpaceApi/Default/spaces/PUT/ApiPermission.Test.SpaceFinderBackendSpaceApiE9BB53FF.PUT..spaces SpaceApispacesPUTApiPermissionTestSpaceFinderBackendSpaceApiE9BB53FFPUTspacesFCB0DC45 
+[+] AWS::ApiGateway::Method SpaceApi/Default/spaces/PUT SpaceApispacesPUTD4F9CA05 
+[+] AWS::IAM::Role SpacesTable-Update/ServiceRole SpacesTableUpdateServiceRoleC28CF914 
+[+] AWS::IAM::Policy SpacesTable-Update/ServiceRole/DefaultPolicy SpacesTableUpdateServiceRoleDefaultPolicy36B2545A 
+[+] AWS::Lambda::Function SpacesTable-Update SpacesTableUpdate931099D2 
+[~] AWS::ApiGateway::Stage SpaceApi/DeploymentStage.prod SpaceApiDeploymentStageprodBB8A31FE 
+ └─ [~] DeploymentId
+     └─ [~] .Ref:
+         ├─ [-] SpaceApiDeploymentA2B9E7650a1fc074a2fc5ed4e95ed4b54389cd85
+         └─ [+] SpaceApiDeploymentA2B9E76578d01c4db6a3368d7aa352f61ec7806c
+
+
+```
+
+See 06-update tag
+
 ---
 
 ## 14 - TS recap

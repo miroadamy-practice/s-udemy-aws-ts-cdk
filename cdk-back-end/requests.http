@@ -3,12 +3,24 @@
 GET {{endpoint}}/hello
 ###
 
+GET {{endpoint}}/spaces
+###
+
 GET {{endpoint}}/spaces?spaceId=87775a5d-9b2c-45ec-8923-c96944937766
 ###
 
 GET {{endpoint}}/spaces?location=Valencia
 
 ###
+PUT {{endpoint}}/spaces?spaceId=87775a5d-9b2c-45ec-8923-c96944937766
+Content-Type: application/json
+
+{
+    "location": "Prencov",
+    "name": "Updated Name2"
+}
+###
+
 POST {{endpoint}}/spaces/
 Content-Type: application/json
 
