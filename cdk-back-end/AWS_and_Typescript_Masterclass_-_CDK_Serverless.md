@@ -1294,6 +1294,7 @@ Content-Type: application/json
     "name": "Best Oranges"
 }
 ```
+
 and run it:
 
 ```text
@@ -1314,6 +1315,29 @@ X-Amz-Cf-Id: Uaj-SpbIjE94MMp3RSBrzgTZx5N3hySaEYXE1MpRSd-V8SR3y8DiYw==
 ```
 
 See tag 06-DynamoDB-create
+
+### Implementing Read - need scan
+
+Result:
+
+```json
+{statusCode: 200, body: '{"Items":[{"spaceId":"2754ab76-7c71-4956-b8bd-…:"Best Oranges"}],"Count":3,"ScannedCount":3}'}
+body: '{"Items":[{"spaceId":"2754ab76-7c71-4956-b8bd-7982d409fe14","location":"Bratislava"},{"spaceId":"0640b5de-32dd-4c67-b51d-c52497e3860c"},{"spaceId":"87775a5d-9b2c-45ec-8923-c96944937766","location":"Valencia","name":"Best Oranges"}],"Count":3,"ScannedCount":3}'
+statusCode: 200
+
+```
+
+Modified the test function to retrieve the result:
+
+```typescript
+const result = handler({} as any, {} as any).then((apiResult) => {
+    const items = JSON.parse(apiResult.body);
+    console.log(items)
+})
+```
+
+See tag 06-scan
+
 ---
 
 ## 14 - TS recap
