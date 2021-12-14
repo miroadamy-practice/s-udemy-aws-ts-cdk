@@ -1338,6 +1338,64 @@ const result = handler({} as any, {} as any).then((apiResult) => {
 
 See tag 06-scan
 
+### Implementing query
+
+Complicated way how to define expression:
+
+```typescript
+    try {
+        if (event.queryStringParameters) {
+            if (PRIMARY_KEY! in event.queryStringParameters) {
+                const keyValue = event.queryStringParameters[PRIMARY_KEY!];
+                const queryResponse = await dbClient.query({
+                    TableName: TABLE_NAME!,
+                    KeyConditionExpression: "#zz = :zzzz",
+                    ExpressionAttributeNames: {
+                        '#zz': PRIMARY_KEY!
+                    },
+                    ExpressionAttributeValues: {
+                        ':zzzz': keyValue
+                    }
+                }).promise();
+                
+            }
+        } else {
+            const queryResponse = await dbClient.scan({
+                TableName: TABLE_NAME!
+            }
+            ).promise();
+            result.body = JSON.stringify(queryResponse);           
+        }
+    
+
+    } catch (error: any) {
+        result.body = error.message
+    }
+```
+
+Must deploy - see
+
+```text
+Resources
+[-] AWS::ApiGateway::Deployment SpaceApiDeploymentA2B9E765e3353bb2d287b01ea01c68a193469623 destroy
+[+] AWS::ApiGateway::Deployment SpaceApi/Deployment SpaceApiDeploymentA2B9E7650a1fc074a2fc5ed4e95ed4b54389cd85 
+[+] AWS::Lambda::Permission SpaceApi/Default/spaces/GET/ApiPermission.SpaceFinderBackendSpaceApiE9BB53FF.GET..spaces SpaceApispacesGETApiPermissionSpaceFinderBackendSpaceApiE9BB53FFGETspacesD9D63E6C 
+[+] AWS::Lambda::Permission SpaceApi/Default/spaces/GET/ApiPermission.Test.SpaceFinderBackendSpaceApiE9BB53FF.GET..spaces SpaceApispacesGETApiPermissionTestSpaceFinderBackendSpaceApiE9BB53FFGETspaces5EE376C5 
+[+] AWS::ApiGateway::Method SpaceApi/Default/spaces/GET SpaceApispacesGET6C083CB2 
+[+] AWS::IAM::Role SpacesTable-Read/ServiceRole SpacesTableReadServiceRoleDC90AD04 
+[+] AWS::IAM::Policy SpacesTable-Read/ServiceRole/DefaultPolicy SpacesTableReadServiceRoleDefaultPolicyEAD1E3B1 
+[+] AWS::Lambda::Function SpacesTable-Read SpacesTableReadC88C4D14 
+[~] AWS::ApiGateway::Stage SpaceApi/DeploymentStage.prod SpaceApiDeploymentStageprodBB8A31FE 
+ └─ [~] DeploymentId
+     └─ [~] .Ref:
+         ├─ [-] SpaceApiDeploymentA2B9E765e3353bb2d287b01ea01c68a193469623
+         └─ [+] SpaceApiDeploymentA2B9E7650a1fc074a2fc5ed4e95ed4b54389cd85
+
+
+```
+
+See 06-query-by-id
+
 ---
 
 ## 14 - TS recap
