@@ -1,13 +1,14 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import {handler} from './services/SpacesTable/Delete'
+import {handler} from './services/SpacesTable/Create'
 
 // call the lambda, permissions do not matter
 
-const event = {
+const event:  APIGatewayProxyEvent = {
     body: {
-        location: 'Bratislava'
+        location: 'Bratislava',
+        name: 'Home'
     }
-}
+} as any;
 
 const event2: APIGatewayProxyEvent = {
     queryStringParameters: {
@@ -32,7 +33,7 @@ const event4: APIGatewayProxyEvent = {
 } as any;
 
 
-const result = handler(event2, {} as any).then((apiResult) => {
-    const items = JSON.parse(apiResult.body);
-    console.log(items)
+const result = handler(event , {} as any).then((apiResult) => {
+    const item = JSON.parse(apiResult.body);
+    console.log(item)
 })

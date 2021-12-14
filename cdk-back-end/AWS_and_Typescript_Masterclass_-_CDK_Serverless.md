@@ -1792,6 +1792,10 @@ async function handler (event: APIGatewayProxyEvent, context: Context): Promise<
 
 See 06-delete
 
+### Data validation
+
+
+
 ---
 
 ## 14 - TS recap
