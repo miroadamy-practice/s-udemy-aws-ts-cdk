@@ -17,7 +17,8 @@ export class SpaceStack extends Stack {
   private spacesTable = new GenericTable(this, {
       tableName: 'SpacesTable',
       primaryKey: 'spaceId',
-
+      secondaryIndexes: ['location'],
+      
       createLambdaPath: 'Create',
       readLambdaPath: 'Read'
 

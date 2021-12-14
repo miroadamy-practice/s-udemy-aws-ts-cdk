@@ -1338,7 +1338,7 @@ const result = handler({} as any, {} as any).then((apiResult) => {
 
 See tag 06-scan
 
-### Implementing query
+### Implementing query by primary key
 
 Complicated way how to define expression:
 
@@ -1427,6 +1427,209 @@ X-Amz-Cf-Id: nAJHlJS9bxp2ondDXm4eVt7MpUb_UfLjElXv1Q3gmctlHvJnyQW0Ng==
 }
 ```
 
+### Query by secondary index
+
+Must add secondary index (or more):
+
+Add specification:
+
+```typescript
+ private spacesTable = new GenericTable(this, {
+      tableName: 'SpacesTable',
+      primaryKey: 'spaceId',
+      secondaryIndexes: ['location'],
+      
+      createLambdaPath: 'Create',
+      readLambdaPath: 'Read'
+
+  });
+
+---
+    private addSecondaryIndexes() {
+        if (this.props.secondaryIndexes) {
+            for (const secondaryIndex of this.props.secondaryIndexes) {
+                this.table.addGlobalSecondaryIndex({
+                    indexName: secondaryIndex,
+                    partitionKey: {
+                        name: secondaryIndex,
+                        type: AttributeType.STRING
+                    }
+                });
+            }
+        }
+    }
+```
+
+And use different fucntion to query for it - note the refactored Read body.
+
+```typescript
+async function queryWithSecondaryPartition(queryParams:APIGatewayProxyEventQueryStringParameters) {
+    const queryKey = Object.keys(queryParams)[0];
+    const queryValue = queryParams[queryKey];
+
+    const queryResponse = await dbClient.query({
+        TableName: TABLE_NAME!,
+        IndexName: queryKey,
+        KeyConditionExpression: "#zz = :zzzz",
+        ExpressionAttributeNames: {
+            '#zz': queryKey
+        },
+        ExpressionAttributeValues: {
+            ':zzzz': queryValue
+        }
+    }).promise();
+    return JSON.stringify(queryResponse.Items);
+}
+```
+
+The difference:
+
+```text
+Stack Space-Finder-Backend (SpaceFinder)
+IAM Statement Changes
+┌───┬────────────────────────────┬────────┬────────────────────────────┬────────────────────────────┬───────────┐
+│   │ Resource                   │ Effect │ Action                     │ Principal                  │ Condition │
+├───┼────────────────────────────┼────────┼────────────────────────────┼────────────────────────────┼───────────┤
+│ - │ ${SpacesTable.Arn}         │ Allow  │ dynamodb:BatchWriteItem    │ AWS:${SpacesTable-Create/S │           │
+│   │                            │        │ dynamodb:DeleteItem        │ erviceRole}                │           │
+│   │                            │        │ dynamodb:PutItem           │                            │           │
+│   │                            │        │ dynamodb:UpdateItem        │                            │           │
+│ - │ ${SpacesTable.Arn}         │ Allow  │ dynamodb:BatchGetItem      │ AWS:${SpacesTable-Read/Ser │           │
+│   │                            │        │ dynamodb:ConditionCheckIte │ viceRole}                  │           │
+│   │                            │        │ m                          │                            │           │
+│   │                            │        │ dynamodb:GetItem           │                            │           │
+│   │                            │        │ dynamodb:GetRecords        │                            │           │
+│   │                            │        │ dynamodb:GetShardIterator  │                            │           │
+│   │                            │        │ dynamodb:Query             │                            │           │
+│   │                            │        │ dynamodb:Scan              │                            │           │
+├───┼────────────────────────────┼────────┼────────────────────────────┼────────────────────────────┼───────────┤
+│ + │ ${SpacesTable.Arn}         │ Allow  │ dynamodb:BatchWriteItem    │ AWS:${SpacesTable-Create/S │           │
+│   │ ${SpacesTable.Arn}/index/* │        │ dynamodb:DeleteItem        │ erviceRole}                │           │
+│   │                            │        │ dynamodb:PutItem           │                            │           │
+│   │                            │        │ dynamodb:UpdateItem        │                            │           │
+│ + │ ${SpacesTable.Arn}         │ Allow  │ dynamodb:BatchGetItem      │ AWS:${SpacesTable-Read/Ser │           │
+│   │ ${SpacesTable.Arn}/index/* │        │ dynamodb:ConditionCheckIte │ viceRole}                  │           │
+│   │                            │        │ m                          │                            │           │
+│   │                            │        │ dynamodb:GetItem           │                            │           │
+│   │                            │        │ dynamodb:GetRecords        │                            │           │
+│   │                            │        │ dynamodb:GetShardIterator  │                            │           │
+│   │                            │        │ dynamodb:Query             │                            │           │
+│   │                            │        │ dynamodb:Scan              │                            │           │
+└───┴────────────────────────────┴────────┴────────────────────────────┴────────────────────────────┴───────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+Resources
+[~] AWS::DynamoDB::Table SpacesTable SpacesTable8A997355 may be replaced
+ ├─ [~] AttributeDefinitions (may cause replacement)
+ │   └─ @@ -2,5 +2,9 @@
+ │      [ ]   {
+ │      [ ]     "AttributeName": "spaceId",
+ │      [ ]     "AttributeType": "S"
+ │      [+]   },
+ │      [+]   {
+ │      [+]     "AttributeName": "location",
+ │      [+]     "AttributeType": "S"
+ │      [ ]   }
+ │      [ ] ]
+ └─ [+] GlobalSecondaryIndexes
+     └─ [{"IndexName":"location","KeySchema":[{"AttributeName":"location","KeyType":"HASH"}],"Projection":{"ProjectionType":"ALL"}}]
+[~] AWS::IAM::Policy SpacesTable-Create/ServiceRole/DefaultPolicy SpacesTableCreateServiceRoleDefaultPolicy308B2E77 
+ └─ [~] PolicyDocument
+     └─ [~] .Statement:
+         └─ @@ -15,7 +15,18 @@
+            [ ]       ]
+            [ ]     },
+            [ ]     {
+            [-]       "Ref": "AWS::NoValue"
+            [+]       "Fn::Join": [
+            [+]         "",
+            [+]         [
+            [+]           {
+            [+]             "Fn::GetAtt": [
+            [+]               "SpacesTable8A997355",
+            [+]               "Arn"
+            [+]             ]
+            [+]           },
+            [+]           "/index/*"
+            [+]         ]
+            [+]       ]
+            [ ]     }
+            [ ]   ]
+            [ ] }
+[~] AWS::IAM::Policy SpacesTable-Read/ServiceRole/DefaultPolicy SpacesTableReadServiceRoleDefaultPolicyEAD1E3B1 
+ └─ [~] PolicyDocument
+     └─ [~] .Statement:
+         └─ @@ -18,7 +18,18 @@
+            [ ]       ]
+            [ ]     },
+            [ ]     {
+            [-]       "Ref": "AWS::NoValue"
+            [+]       "Fn::Join": [
+            [+]         "",
+            [+]         [
+            [+]           {
+            [+]             "Fn::GetAtt": [
+            [+]               "SpacesTable8A997355",
+            [+]               "Arn"
+            [+]             ]
+            [+]           },
+            [+]           "/index/*"
+            [+]         ]
+            [+]       ]
+            [ ]     }
+            [ ]   ]
+            [ ] }
+[~] AWS::Lambda::Function SpacesTable-Read SpacesTableReadC88C4D14 
+ ├─ [~] Code
+ │   └─ [~] .S3Key:
+ │       ├─ [-] 7a60db951d9d3433431d53473dfaf2a6c389ab2c91472f1a87468b3183892c66.zip
+ │       └─ [+] c6d379115c7f0d054db6b5e1008551271113ee0cbefdfa975b771c1ed8606bc0.zip
+ └─ [~] Metadata
+     └─ [~] .aws:asset:path:
+         ├─ [-] asset.7a60db951d9d3433431d53473dfaf2a6c389ab2c91472f1a87468b3183892c66
+         └─ [+] asset.c6d379115c7f0d054db6b5e1008551271113ee0cbefdfa975b771c1ed8606bc0
+
+
+```
+
+Here it what it returns
+
+```text
+GET {{endpoint}}/spaces?location=Valencia
+---
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 284
+Connection: close
+Date: Tue, 14 Dec 2021 21:18:08 GMT
+x-amzn-RequestId: 4d96c910-03f0-407d-9562-858b589ecc58
+x-amz-apigw-id: KW6CkE38liAFXtg=
+X-Amzn-Trace-Id: Root=1-61b90a10-5a4a351e3bec93b26812ed91;Sampled=0
+X-Cache: Miss from cloudfront
+Via: 1.1 6e4fd2f7f4c55027ff6ee922bdafd3af.cloudfront.net (CloudFront)
+X-Amz-Cf-Pop: VIE50-P1
+X-Amz-Cf-Id: TX8BMy32TLLzxnW2fxZN0vDW_bc76QbhcjLJ4L_OeFcqrcP7BB_Nnw==
+
+[
+  {
+    "spaceId": "a710c7db-9f89-414e-a6dd-9d978d2792f8",
+    "location": "Valencia",
+    "name": "Fire Mania Fallas"
+  },
+  {
+    "spaceId": "773b977c-5fd4-487a-97e3-62b1f10979dc",
+    "location": "Valencia",
+    "name": "Turia"
+  },
+  {
+    "spaceId": "87775a5d-9b2c-45ec-8923-c96944937766",
+    "location": "Valencia",
+    "name": "Best Oranges"
+  }
+]
+```
+
+Saved as 06-secondary-index
 ---
 
 ## 14 - TS recap

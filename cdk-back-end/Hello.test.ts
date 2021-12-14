@@ -15,7 +15,13 @@ const event2: APIGatewayProxyEvent = {
     }
 } as any;
 
-const result = handler(event2, {} as any).then((apiResult) => {
+const event3: APIGatewayProxyEvent = {
+    queryStringParameters: {
+        location: "Valencia"
+    }
+} as any;
+
+const result = handler(event3, {} as any).then((apiResult) => {
     const items = JSON.parse(apiResult.body);
     console.log(items)
 })

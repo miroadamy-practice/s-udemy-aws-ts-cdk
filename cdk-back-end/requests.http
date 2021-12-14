@@ -5,10 +5,14 @@ GET {{endpoint}}/hello
 
 GET {{endpoint}}/spaces?spaceId=87775a5d-9b2c-45ec-8923-c96944937766
 ###
+
+GET {{endpoint}}/spaces?location=Valencia
+
+###
 POST {{endpoint}}/spaces/
 Content-Type: application/json
 
 {
     "location": "Valencia",
-    "name": "Best Oranges"
+    "name": "Turia"
 }
