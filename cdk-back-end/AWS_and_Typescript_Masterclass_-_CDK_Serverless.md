@@ -1396,6 +1396,37 @@ Resources
 
 See 06-query-by-id
 
+This is what gets returned
+
+```json
+GET {{endpoint}}/spaces?spaceId=87775a5d-9b2c-45ec-8923-c96944937766
+---
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 133
+Connection: close
+Date: Tue, 14 Dec 2021 16:05:13 GMT
+x-amzn-RequestId: ff891295-8ae4-4891-ab98-da9bddf38430
+x-amz-apigw-id: KWMM4ETbliAFqTA=
+X-Amzn-Trace-Id: Root=1-61b8c0b8-3ba71ede549c54dc241a6aa6;Sampled=0
+X-Cache: Miss from cloudfront
+Via: 1.1 af4c7c5690ef99c2d2945817a4e41505.cloudfront.net (CloudFront)
+X-Amz-Cf-Pop: VIE50-P1
+X-Amz-Cf-Id: nAJHlJS9bxp2ondDXm4eVt7MpUb_UfLjElXv1Q3gmctlHvJnyQW0Ng==
+
+{
+  "Items": [
+    {
+      "spaceId": "87775a5d-9b2c-45ec-8923-c96944937766",
+      "location": "Valencia",
+      "name": "Best Oranges"
+    }
+  ],
+  "Count": 1,
+  "ScannedCount": 1
+}
+```
+
 ---
 
 ## 14 - TS recap
