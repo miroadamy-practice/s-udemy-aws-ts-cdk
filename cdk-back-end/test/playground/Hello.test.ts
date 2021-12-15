@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import {handler} from './services/SpacesTable/Create'
+import {handler} from '../../services/SpacesTable/Create'
 
 // call the lambda, permissions do not matter
 

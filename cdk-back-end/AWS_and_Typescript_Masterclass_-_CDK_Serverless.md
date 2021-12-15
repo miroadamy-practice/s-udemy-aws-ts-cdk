@@ -1825,6 +1825,190 @@ export interface Space {
 }
 ```
 
+## 07 - AWS Cognito - User pools
+
+
+- user pools: directory, basic authentication - JWT
+- identity pools: access control, using AWS services
+
+Create cognito user pool and creat user.
+
+To avoid manual password reset, call CLI to make it confirmed
+
+`aws cognito-idp admin-set-user-password --user-pool-id xxxxxx --username uuuuu -- password "qwerty123!" --permanent`
+
+### Generate JWT tokens with Amplify
+
+Will install Amplify locally and experiment
+
+```bash
+➜  cdk-back-end git:(master) ✗ npm i aws-amplify @aws-amplify/auth
+npm WARN deprecated urix@0.1.0: Please see https://github.com/lydell/urix#deprecated
+npm WARN deprecated resolve-url@0.2.1: https://github.com/lydell/resolve-url#deprecated
+npm WARN deprecated sane@4.1.0: some dependency vulnerabilities fixed, support for node < 10 dropped, and newer ECMAScript syntax/features added
+npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+npm WARN deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+npm WARN deprecated uuid@3.3.2: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+npm WARN deprecated uglify-es@3.3.9: support for ECMAScript is superseded by `uglify-js` as of v3.13.0
+
+added 1094 packages, removed 7 packages, and audited 1348 packages in 2m
+
+26 packages are looking for funding
+  run `npm fund` for details
+
+11 moderate severity vulnerabilities
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+```
+
+#### Manually create test-pool for running the tests
+
+- name: test-pool
+- signup by email or username
+- no custom attributes
+- default pwd policy, allow sign up
+- no SMS role - no messages
+- no email customization
+- emails via cognito
+- no tags
+- no remembered devices
+- app client later
+- no lambda triggers
+- review and create
+
+=> eu-central-1_vMurur9r9
+
+Back to integration:
+
+- domain: <https://test-pool-miro.auth.eu-central-1.amazoncognito.com>
+- app client: 
+  - name: test-pool-client
+  - NO generate client secret
+  - enable all auth flows
+
+=> 4tpsgb67gvgfiu4fi7ou9jn28p
+
+
+Create test_user, Qwerty123!
+
+=> make verified
+
+```bash
+aws cognito-idp admin-set-user-password --user-pool-id eu-central-1_vMurur9r9 --username test_user --password 'Qwerty123!' --permanent 
+```
+
+Run the test:
+
+
+```typescript
+import { config } from './config';
+import { AuthService } from './AuthService'
+
+const authService = new AuthService();
+
+const user = authService.login(config.TEST_USER_NAME, config.TEST_USER_PASSWORD);
+console.log(user);
+```
+
+Returns this:
+
+```json
+{
+  username: "test_user",
+  pool: {
+    userPoolId: "eu-central-1_vMurur9r9",
+    clientId: "4tpsgb67gvgfiu4fi7ou9jn28p",
+    client: {
+      endpoint: "https://cognito-idp.eu-central-1.amazonaws.com/",
+      fetchOptions: {
+      },
+    },
+    advancedSecurityDataCollectionFlag: true,
+    storage: function MemoryStorage() {
+    },
+    wrapRefreshSessionCallback: function (callback) {
+      var wrapped = function (error, data) {
+          if (data) {
+              dispatchAuthEvent('tokenRefresh', undefined, "New token retrieved");
+          }
+          else {
+              dispatchAuthEvent('tokenRefresh_failure', error, "Failed to retrieve new token");
+          }
+          return callback(error, data);
+      };
+      return wrapped;
+    },
+  },
+  Session: null,
+  client: {
+    endpoint: "https://cognito-idp.eu-central-1.amazonaws.com/",
+    fetchOptions: {
+    },
+  },
+  signInUserSession: {
+    idToken: {
+      jwtToken: "eyJraWQiOiJwanZGYmtIZlYySHE3bmh3cjc4WUFFR004WEFDVndqazlxSmZoZFFSRm9rPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI1N2MxY2ViMC0yYTMzLTRkZTktODI5Mi1jZDRiMjIwNDUxODEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LWNlbnRyYWwtMS5hbWF6b25hd3MuY29tXC9ldS1jZW50cmFsLTFfdk11cnVyOXI5IiwiY29nbml0bzp1c2VybmFtZSI6InRlc3RfdXNlciIsIm9yaWdpbl9qdGkiOiI5YWQwNjMxNi04MDBlLTQ2NjAtYTI3Ny02NTg1NTczYTU3ZTIiLCJhdWQiOiI0dHBzZ2I2N2d2Z2ZpdTRmaTdvdTlqbjI4cCIsImV2ZW50X2lkIjoiYjAwNzI1YzItM2Q0NC00NjY1LWI3ZDktZmYwYjBmNWYzNjQ2IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2Mzk2MTEzMjYsImV4cCI6MTYzOTYxNDkyNiwiaWF0IjoxNjM5NjExMzI2LCJqdGkiOiI4YTJmNmNhMC1iODIwLTQyMzUtYjU5ZS03ZTUzMjRhNGQ1NTciLCJlbWFpbCI6Im1pcm8uYWRhbXlAZ21haWwuY29tIn0.SLaqyWtQ3EuiXiBZlPB3CIsOQBMnUCq2zG2ZrIELPDSfUCOiaGdPMtKceYWP_Xvax7uv8cWLgxDAai4Gmt6gUqawSsoxJhMqo_BXvqs79UcJrClKvAX5Ek4prSMFZ44y5a6153espbiIHejvgOBZJL5Ro4tTuDkNT5-j9tjd8aG9NpfbSqOOyW8Ng149b30dd-W18_z_F8lr37UBdr25_13z-KF1yLDbXF-jWm1RZuClk7A6aHTWO63vpZ_rJ-A0qsTnE8N93qlZ8b0C7Qy_7hQBSU0yAP_y7Of-VPU7jWXKyZnuYs6ioDE-b0fogKepLcdddzY-GDdzaGZyohqg_w",
+      payload: {
+        sub: "57c1ceb0-2a33-4de9-8292-cd4b22045181",
+        email_verified: true,
+        iss: "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_vMurur9r9",
+        "cognito:username": "test_user",
+        origin_jti: "9ad06316-800e-4660-a277-6585573a57e2",
+        aud: "4tpsgb67gvgfiu4fi7ou9jn28p",
+        event_id: "b00725c2-3d44-4665-b7d9-ff0b0f5f3646",
+        token_use: "id",
+        auth_time: 1639611326,
+        exp: 1639614926,
+        iat: 1639611326,
+        jti: "8a2f6ca0-b820-4235-b59e-7e5324a4d557",
+        email: "miro.adamy@gmail.com",
+      },
+    },
+    refreshToken: {
+      token: "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUlNBLU9BRVAifQ.liN0p7lx9JHiGymD2iEiDxBpx68SGtZbXu6YN_nPucf1vYnApM5kWPoama0zJnqhwTEkw_RPAPNqqu5fiI3G1-DxxvgOgjG3X4FiM7vJN0PW0V6zipuAC8J9LHNZdQGPP8S4pf1BJvW58eMttP551VmjuPkjBlXesF2Axg5i5usp2hJH6P3lke48T1NyilJgVhsHRUXi_pH19zfpzKr7Wyt4e3jeQ7NBshfzzVJDezvC7_b6AIdCZ8knTfVdOzkfEfkGw8o5CxMqybCH_VXs3eiAcjBhUqx3OH33dus8c68WTfw_kJTgahyzkA_jsc1LZk66wpF9tuZpj05_r_WUjw.1c4TMg8v6BPqflA2.OKqsVNchYAs69YMOBVqAmbe8-QDDVtKOcULiygDQ_wfQV80zPMfzByStZG5wnzd_z7tRwiSwZaDjUbL3jPtZT_YF4PGaCLecK9-jwZWzIU4hMLJ7ldGR86WkoErr6l1X9NelvH5lG5jxyvCj0262RvDPou807F2jcrBvVHm0nzQtHuKQ3hErmvXBa47pBnx_SXIVzxF6zgbcRY4BQscLNiA4Kf5JZickDx3RlKu1tMZM-tkBIpqbHUC41tO-GxCyHXZcFaxLpatfs4NPBDCtDnWIgPahxGhiojgs32iNtmwK38BleQx8ngTKN_C15UWk1vbH8MFiJg91fUo9Ii73Y7TnmdLjgbvuwY8Aa6b2ydtbL6UN5ZPWIy-VVEMS96PZYIxXqLPmw3HpKCUUnawVzCBPX2gCT9reemr08xNhXLp6KVpvRLd1NkAYd-tzvEX-xxKnojDVVd2kuOXB0yfQUuVExNG-66tkywpIhCLvZCbpKL7735UP7LHIlJAcVRTYX6TtLxV9pqVDNrk86FKAhEqNLgDIe-Kda9QkzatJj62LNXiRll0Uh5HZlr-xr4O_9mU3QeIzH-AcOrxGbZaVHKZgLiE_dfC2cx5P4gpLHm95uueOzdDH6bTKcTdvjbOSajMPeAwjuMOMTDo___rcZXUcCrWV5lSdOH_hV7_O-ILhEv0xYkd3q2DeeE3tWUSxOMzV7MvSW9nOQ2t2B8a6CCDq4ErPqpJ0yq0GbZBp94gxisrRd-7OSPPbIC-dz8mnI8FkanJqrSz1W_qHin65UCWjVpmkhd5qap9bmsGAhzyj7AVOTkT_8g040KNNwZOIgLmI8PhqN8epuJfSjNTeatD_CptDn4FyXPcU9XD2k3JF-RMK1mleMDI5nvfcI-a9kIJHUTnpzO7ZXZD5zrc0IZpzQv0hJpQ4PrtmePdP1-iaEq4TUR__5VCFo2BoYuKF92ZFmWp0Gvv-1dLKXOrgaLrIpilD7w_5dSEqWHq-ORh53UwNChtONOhT1xkkJfV19GJtR34k_2e1eVu-HMe4mXNZ6aF2KjRZMCR_UZjsJymXxQg_tOfZGvqrVy2djgwGWjVgSaMcBLQZNky7e3jOn4TWHYIQQL60pY4ddIgki1sCrirrhGa3gIKMQefuoggPOtJDUpmnJoqSH94kMXVWnujkIDhJ1jBGqyY3_92g7T8M33FNCAeM_hQK8jc_d9SL-cBLoKCvw22Kjkj6tU-dfRIb6psM2shVzWf_IMW6kqvckRmH0qNQDS8nLwfAz07TOQe2_AuFAbVJ2sF1xycJ7A.2yzJEc_L6NI0Yw3x6epc7w",
+    },
+    accessToken: {
+      jwtToken: "eyJraWQiOiJ0WDFoVXZtRHJsT3lGeWhSZG9yazk4ZTI1ZlNTditGaHNxWGgwdXJTbVFRPSIsImFsZyI6IlJTMjU2In0.eyJvcmlnaW5fanRpIjoiOWFkMDYzMTYtODAwZS00NjYwLWEyNzctNjU4NTU3M2E1N2UyIiwic3ViIjoiNTdjMWNlYjAtMmEzMy00ZGU5LTgyOTItY2Q0YjIyMDQ1MTgxIiwiZXZlbnRfaWQiOiJiMDA3MjVjMi0zZDQ0LTQ2NjUtYjdkOS1mZjBiMGY1ZjM2NDYiLCJ0b2tlbl91c2UiOiJhY2Nlc3MiLCJzY29wZSI6ImF3cy5jb2duaXRvLnNpZ25pbi51c2VyLmFkbWluIiwiYXV0aF90aW1lIjoxNjM5NjExMzI2LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuZXUtY2VudHJhbC0xLmFtYXpvbmF3cy5jb21cL2V1LWNlbnRyYWwtMV92TXVydXI5cjkiLCJleHAiOjE2Mzk2MTQ5MjYsImlhdCI6MTYzOTYxMTMyNiwianRpIjoiMTIyYjI5MDEtNGVhYi00ZDY3LWJiYTItNzI4OTk5ZDk0OTc4IiwiY2xpZW50X2lkIjoiNHRwc2diNjdndmdmaXU0Zmk3b3U5am4yOHAiLCJ1c2VybmFtZSI6InRlc3RfdXNlciJ9.RRjOaV5CM3PK6uysqmuUt9ufSqTAx0oFYpcaM-xQqWwBDM7GzIM06_ZSLGPqJ5kdWCpZEvt34P8_xq7bcKussjlekNFk1PCHNsHES7RoHLZWUbI_ZynJ-ErSpfTcijIZaYylgPIbooRs_IsaJl1pSvBVv2IN18HEGbFLYHN8c83bXBvheVWNvMFHkNS6yowO_QZDOHkWWYImOPd_Tro65R7MspjPwFhWJLEbbVq1SVzIYdKuxBCZN1kaw0PRX6OIapsVEJLFht20GoVLARFEmrmDpUB6s0b86FxbtlEiZuECNvlXrZpTugLFYMyzS6LM_3WnoPPXigjZxNB1XL01KA",
+      payload: {
+        origin_jti: "9ad06316-800e-4660-a277-6585573a57e2",
+        sub: "57c1ceb0-2a33-4de9-8292-cd4b22045181",
+        event_id: "b00725c2-3d44-4665-b7d9-ff0b0f5f3646",
+        token_use: "access",
+        scope: "aws.cognito.signin.user.admin",
+        auth_time: 1639611326,
+        iss: "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_vMurur9r9",
+        exp: 1639614926,
+        iat: 1639611326,
+        jti: "122b2901-4eab-4d67-bba2-728999d94978",
+        client_id: "4tpsgb67gvgfiu4fi7ou9jn28p",
+        username: "test_user",
+      },
+    },
+    clockDrift: 0,
+  },
+  authenticationFlowType: "USER_SRP_AUTH",
+  storage: function MemoryStorage() {
+  },
+  keyPrefix: "CognitoIdentityServiceProvider.4tpsgb67gvgfiu4fi7ou9jn28p",
+  userDataKey: "CognitoIdentityServiceProvider.4tpsgb67gvgfiu4fi7ou9jn28p.test_user.userData",
+  attributes: {
+    sub: "57c1ceb0-2a33-4de9-8292-cd4b22045181",
+    email_verified: true,
+    email: "miro.adamy@gmail.com",
+  },
+  preferredMFA: "NOMFA",
+}
+```
+
 ---
 
 ## 14 - TS recap
