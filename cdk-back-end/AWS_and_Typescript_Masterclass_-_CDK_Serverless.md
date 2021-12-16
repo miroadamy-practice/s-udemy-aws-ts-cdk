@@ -2009,6 +2009,75 @@ Returns this:
 }
 ```
 
+### Using JWT Tokens
+
+Before - can call /hello/ OK
+
+
+```text
+GET {{endpoint}}/hello
+---
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 4760
+Connection: close
+Date: Thu, 16 Dec 2021 22:51:11 GMT
+x-amzn-RequestId: ee38029c-2ece-4f9d-91df-ebd29053e9c3
+x-amz-apigw-id: KdtiyEs4liAFjWw=
+X-Amzn-Trace-Id: Root=1-61bbc2de-160c0b555c44995a41718b6c;Sampled=0
+X-Cache: Miss from cloudfront
+Via: 1.1 e34b146b2a4038019e9b2a95fac837fd.cloudfront.net (CloudFront)
+X-Amz-Cf-Pop: VIE50-P1
+X-Amz-Cf-Id: v_YhX99M_2nTrTP1udClJPyDh5I-1q_nHNpJWWPbvSunqvwaRXf9ZA==
+
+Hello from TS Lambda - here are your buckets:[{"Name":"atmosphere-docs-publisher-pipelinebucket-13584wbaypu4a","CreationDate":"2020-06-30T11:27:11.000Z"},{"Name":"atmosphere-docs-publisher-stack-pipelinebucket-1vkzhpuffn3jw","CreationDate":"2020-06-30T11:27:11.000Z"},{"Name":"atmosphere.pe.reliant.net","CreationDate":"2020-06-30T11:27:11.000Z"},{"Name":"aws-000000-cloudtrail-bucket-469225108435","CreationDate":"2021-01-08T21:01:54.000Z"},{"Name":"aws-000000-dev-pfi-s3-cloudtrail-f993c42d5d94","CreationDate":"2019-05-27T17:02:54.000Z"},{"Name":"aws-000000-staging-s3-cloudtrail-d55ae2714f32","CreationDate":"2019-11-04T18:36:46.000Z"},{"Name":"aws-000000-test-trailbucket-xacajphh2n49","CreationDate":"2020-03-23T03:01:58.000Z"},{"Name":"aws-codestar-ca-central-1-469225108435","CreationDate":"2019-12-16T19:01:02.000Z"},{"Name":"aws-codestar-ca-central-1-469225108435-test-codestar-pipe","CreationDate":"2019-12-16T19:04:39.000Z"},{"Name":"aws-perspective-accesslogsbucket-2rkkn8cb3w6p","CreationDate":"2020-10-05T13:39:19.000Z"},{"Name":"aws-sam-cli-managed-default-samclisourcebucket-le1tzalhcdcv","CreationDate":"2021-11-27T17:45:26.000Z"},{"Name":"aws-stackset-drift-detec-serverlessdeploymentbuck-1i3jcfyd3g7wf","CreationDate":"2020-10-15T20:05:54.000Z"},{"Name":"cdk-hnb659fds-assets-469225108435-eu-central-1","CreationDate":"2021-12-08T18:11:49.000Z"},{"Name":"cdktoolkit-stagingbucket-o66kpow1db31","CreationDate":"2021-12-08T18:12:09.000Z"},{"Name":"cf-templates-cod90gs5ld9b-ca-central-1","CreationDate":"2020-03-13T14:14:33.000Z"},{"Name":"cf-templates-cod90gs5ld9b-us-east-1","CreationDate":"2020-07-01T04:49:53.000Z"},{"Name":"cf-templates-cod90gs5ld9b-us-east-2","CreationDate":"2020-03-18T19:57:30.000Z"},{"Name":"cf-templates-cod90gs5ld9b-us-west-1","CreationDate":"2020-03-31T00:57:52.000Z"},{"Name":"cfn-test-bucket-000","CreationDate":"2020-03-13T15:48:07.000Z"},{"Name":"codepipeline-us-east-1-707035415740","CreationDate":"2020-07-02T02:17:25.000Z"},{"Name":"codesuite-demo-lambdacopy-11u5l3eh1ge-localbucket-cxwcqqtyx205","CreationDate":"2020-06-26T05:03:59.000Z"},{"Name":"codesuite-demo-pipeline-k1nrvleque-artifactbucket-18p2zu2q87y6","CreationDate":"2020-06-26T05:04:01.000Z"},{"Name":"config-bucket-469225108435","CreationDate":"2020-06-05T04:19:35.000Z"},{"Name":"config-bucket-469225108435-manual","CreationDate":"2020-03-17T21:11:10.000Z"},{"Name":"config-bucket-ca-central-1-469225108435","CreationDate":"2021-01-08T21:02:17.000Z"},{"Name":"config-bucket-us-east-1-469225108435","CreationDate":"2021-01-08T21:01:59.000Z"},{"Name":"config-bucket-us-west-2-469225108435","CreationDate":"2021-01-08T21:02:34.000Z"},{"Name":"ct-bucket-469225108435","CreationDate":"2020-07-02T07:42:38.000Z"},{"Name":"dive-personalize-events-1","CreationDate":"2020-07-02T12:47:23.000Z"},{"Name":"docs.atmosphere.pe.reliant.net","CreationDate":"2020-07-02T13:21:16.000Z"},{"Name":"global-s3-logs-logs-20191108132607049200000001","CreationDate":"2019-11-12T19:30:19.000Z"},{"Name":"logs-000000","CreationDate":"2020-01-03T21:43:47.000Z"},{"Name":"logs-pvtr","CreationDate":"2019-11-13T20:02:40.000Z"},{"Name":"logzio-aws-serverless-test","CreationDate":"2020-10-16T20:11:08.000Z"},{"Name":"pe.reliant.net","CreationDate":"2020-07-06T21:45:10.000Z"},{"Name":"pvtr-logs","CreationDate":"2019-11-17T02:23:36.000Z"},{"Name":"resources-pckg-dev-serverlessdeploymentbucket-10scqkldy24f0","CreationDate":"2020-07-07T06:14:34.000Z"},{"Name":"resources-pckg-nothing-serverlessdeploymentbucket-1v1djcsazikhi","CreationDate":"2020-07-07T06:14:34.000Z"},{"Name":"saas-identity-with-cognito-iden-destinationbucket-urhlxpa7zsyf","CreationDate":"2020-06-27T22:39:20.000Z"},{"Name":"saas-identity-with-cognito-identit-artifactbucket-jyn1g3ocz6j0","CreationDate":"2020-06-27T22:39:23.000Z"},{"Name":"session-manager-logs-469225108435","CreationDate":"2020-06-27T23:36:24.000Z"},{"Name":"signup-dev.hv3.xyz","CreationDate":"2020-07-07T13:50:45.000Z"},{"Name":"stackset-my-stack-set-65e20d00-69b9-configbucket-wpivuvqt55kw","CreationDate":"2021-01-08T21:18:09.000Z"},{"Name":"stackset-my-stack-set-a1be8021-0bf0-configbucket-1297xtwlma389","CreationDate":"2021-01-08T21:18:49.000Z"},{"Name":"stackset-my-stack-set-cc887279-e71f-configbucket-p63zdl4r2lew","CreationDate":"2021-01-08T21:19:33.000Z"},{"Name":"stackset-stacksetoverrideandupdatetes-trailbucket-1p8qnz3a0vdx3","CreationDate":"2020-06-11T15:07:35.000Z"},{"Name":"test-automation-scripts","CreationDate":"2020-04-21T19:09:37.000Z"},{"Name":"test-ct-stack-trailbucket-v32pu3w2pg3a","CreationDate":"2020-03-31T01:00:17.000Z"},{"Name":"test-no-tag-bucket-1","CreationDate":"2020-08-31T17:44:39.000Z"},{"Name":"test-s3-sys-testcustomer-20201207175115286500000003","CreationDate":"2020-12-07T17:51:18.000Z"}]
+```
+
+Restrict access to API GW
+
+Console - Authorizers, create new Authorizer, Cognito
+
+Token Source => `Authorization`, 
+
+set Authorizer to hello
+
+Redeploy API
+
+Now:
+
+```text
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json
+Content-Length: 26
+Connection: close
+Date: Thu, 16 Dec 2021 22:58:02 GMT
+x-amzn-RequestId: 8477653c-204c-4e5e-87e3-0bca25d2088e
+x-amzn-ErrorType: UnauthorizedException
+x-amz-apigw-id: KdujNGuqFiAFjXA=
+X-Cache: Error from cloudfront
+Via: 1.1 8fc54d3acff9539327f4d7a6bf40a31f.cloudfront.net (CloudFront)
+X-Amz-Cf-Pop: VIE50-P1
+X-Amz-Cf-Id: p_Fuf9zaUH7YDjXDU4FSWhlREchCBigFZ33xVdggBiZn30jEq02jbw==
+
+{
+  "message": "Unauthorized"
+}
+```
+
+Retrieve fresh token add idToken to requests:
+
+```text
+@token = eyJraWQiOiJwanZGYmtIZlYySHE3bmh3cjc4WUFFR004WEFDVndqazlxSmZoZFFSRm9rPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI1N2MxY2ViMC0yYTMzLTRkZTktODI5Mi1jZDRiMjIwNDUxODEiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LWNlbnRyYWwtMS5hbWF6b25hd3MuY29tXC9ldS1jZW50cmFsLTFfdk11cnVyOXI5IiwiY29nbml0bzp1c2VybmFtZSI6InRlc3RfdXNlciIsIm9yaWdpbl9qdGkiOiIxZmEzMTQ0MC0yN2NlLTQ1MDgtOTU2NS0wYWYyNTc0OTk5YTMiLCJhdWQiOiI0dHBzZ2I2N2d2Z2ZpdTRmaTdvdTlqbjI4cCIsImV2ZW50X2lkIjoiMTE3NzkyMDYtN2MwNC00MjkzLTg0ZTUtYzE2ZjFkOGU0YmU2IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2Mzk2OTU2MTIsImV4cCI6MTYzOTY5OTIxMiwiaWF0IjoxNjM5Njk1NjEyLCJqdGkiOiI1MjJiOGU5YS00OGFiLTQxYzktODQ2MS1jMGQ5MmQ1YThhNTgiLCJlbWFpbCI6Im1pcm8uYWRhbXlAZ21haWwuY29tIn0.LdChMdFgKG4hAMR_wIA-uB2rhfzvyX8hVrL5CtPNp2Zmj_GMiwJFioj9KF0quu3OQSMOfpPjlYUQCGHs9IuHwJc_P4uwFdBRA2PsZwqfEMaNXtOPQYYHlxuKhIDEcgMLToaYUpUlAB0Y0GNMC-CKtk1lVuZOEdfAXsqX310XVLqquYwpG4HBP5JhYYRsORzaFpYTr-4J8Z9wzMqzFCuTiZexm7RUhhnO4R5WdbyhmnVtX0AZFNJbTFXayRi38unSMtt9sm4s8Y3e-YLcZPf6j6D4Uavvz447Cm7zAb8K3r-XF8re25D5FoZ7dX6bQkMxjJH_b-AiHRHdukhudbr4xQ
+
+GET {{endpoint}}/hello
+Authorization: {{token}}
+###
+```
+
+Now it works
+
+
 ---
 
 ## 14 - TS recap
