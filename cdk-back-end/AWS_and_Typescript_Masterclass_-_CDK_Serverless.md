@@ -2077,6 +2077,43 @@ Authorization: {{token}}
 
 Now it works
 
+### Understanding JWT tokens
+
+See <https://jwt.io/>
+
+Cognito user groups: add user to the group, use for access control
+
+### Cognito with CDK
+
+Add new AuthorizerWrapper - creates Cognito User Pool and use it in stack:
+
+```text
+Stack Space-Finder-Backend (SpaceFinder)
+Resources
+[+] AWS::Cognito::UserPool SpaceUserPool SpaceUserPool6AB542DC 
+[~] AWS::Lambda::Function SpacesTable-Create SpacesTableCreate125CEC52 
+ ├─ [~] Code
+ │   └─ [~] .S3Key:
+ │       ├─ [-] 5483b486abd178c5b05b4811514f57e0f773e69c6f9283ebb255177ca18de941.zip
+ │       └─ [+] 1319278491390ef2a7def384bab8f1750d6df39ec2661fc787565399235007be.zip
+ └─ [~] Metadata
+     └─ [~] .aws:asset:path:
+         ├─ [-] asset.5483b486abd178c5b05b4811514f57e0f773e69c6f9283ebb255177ca18de941
+         └─ [+] asset.1319278491390ef2a7def384bab8f1750d6df39ec2661fc787565399235007be
+[~] AWS::Lambda::Function SpacesTable-Update SpacesTableUpdate931099D2 
+ ├─ [~] Code
+ │   └─ [~] .S3Key:
+ │       ├─ [-] 47230dd928f67a8178e3b778c3b1afa7a522aa455c280df8e9f85ebbf49643f9.zip
+ │       └─ [+] 6efe027e63813ff0b8574c0d5f1eba019ae6c5b405cc8060d4578bf1b95e2021.zip
+ └─ [~] Metadata
+     └─ [~] .aws:asset:path:
+         ├─ [-] asset.47230dd928f67a8178e3b778c3b1afa7a522aa455c280df8e9f85ebbf49643f9
+         └─ [+] asset.6efe027e63813ff0b8574c0d5f1eba019ae6c5b405cc8060d4578bf1b95e2021
+
+Outputs
+[+] Output UserPoolId UserPoolId: {"Value":{"Ref":"SpaceUserPool6AB542DC"}}
+```
+See 07-authorizer-wrapper
 
 ---
 
