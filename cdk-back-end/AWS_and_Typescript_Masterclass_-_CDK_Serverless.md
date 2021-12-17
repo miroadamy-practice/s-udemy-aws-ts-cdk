@@ -2588,6 +2588,38 @@ And now for all of this in CDK :-)
 Tag: 08-manual-setup
 ### Identity pools in CDK
 
+- new file - IdentityPoolWrapper.ts
+- must use CfnXXX construct
+- manual / laborious setup of roles: the trust portion is kinda complex
+
+Must use the generated IAM roles for the trust relationship as well as 'View Policy Document' from trust relationship: - essentially recreating something like this in CDK code
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "cognito-identity.amazonaws.com"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "cognito-identity.amazonaws.com:aud": "eu-central-1:b4ba0d92-fd51-43f7-98c4-60b71b0ed071"
+        },
+        "ForAnyValue:StringLike": {
+          "cognito-identity.amazonaws.com:amr": "authenticated"
+        }
+      }
+    }
+  ]
+}
+```
+
+We have added admin specific role that actually has some privileges.
+
+We are still not done - need to connect roles to pool, but interim state is in 08-iam-roles-creation
 
 ---
 
