@@ -90,6 +90,20 @@ Happy hacking!
 
 Cleanup after generated + new folders
 
+### React components
+
+- have state and properties
+- on each change of state or props it is rendered, it "reacts"
+- state is internal, props come from outside
+- component can change its state, cannot change properties
+
+#### First class component:
+
+- model - holds data types
+- dummy version of the AuthService - returns user based on hardcoded creds
+- this will be passed to child comp
+
+09-model
 
 ## 10 Using AWS in React with Amplify
 
