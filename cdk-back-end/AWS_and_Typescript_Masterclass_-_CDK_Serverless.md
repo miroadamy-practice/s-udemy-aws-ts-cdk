@@ -2184,6 +2184,149 @@ Create test user and enable it via console
 Get the new token from auth test, put to requests.http => works
 
 07-cdk-pool
+
+### Using groups
+
+Create group via cdk - must use Cfn construct
+
+Change the code of hello to print event, deploy, add test user to admins
+
+Formatted: (note the cognito:groups)
+```json
+{
+  "resource": "/hello",
+  "path": "/hello",
+  "httpMethod": "GET",
+  "headers": {
+    "Accept-Encoding": "gzip, deflate",
+    "Authorization": "eyJraWQiOiI2NTMybGtVZjRpUFIxV3lqMVZUTHRQT2tIYUtZK0JJVW1iZEZTWDZyRExFPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJmOTJlN2JmZi01ZGFmLTQ3ODAtOTk0Yy0xYzM3ZGEyNTljYzIiLCJjb2duaXRvOmdyb3VwcyI6WyJhZG1pbnMiXSwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS1jZW50cmFsLTEuYW1hem9uYXdzLmNvbVwvZXUtY2VudHJhbC0xX1JzSHNCTk1hbiIsImNvZ25pdG86dXNlcm5hbWUiOiJ0ZXN0X3VzZXIiLCJvcmlnaW5fanRpIjoiY2I3NWQxNjYtNDExNS00MmU2LWFiODMtZGExYTBlZGY2MTI5IiwiYXVkIjoiNmhrbWtkZjJqMTFmdDVwb3RwMHBhb3FvMXAiLCJldmVudF9pZCI6ImVkN2RjMGZhLWFmMGYtNDk2Ni1iOTQyLWJmYjg1NTkwNDMwYiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjM5NzQxMTY1LCJleHAiOjE2Mzk3NDQ3NjUsImlhdCI6MTYzOTc0MTE2NSwianRpIjoiNWE3Y2YxYjUtNjk3My00MmE3LWI2OWEtMjY2N2U3N2E4YTlhIiwiZW1haWwiOiJtaXJvLmFkYW15QGdtYWlsLmNvbSJ9.n-mFfIWxCphXhJFPaubqIP4w3O0Au3ddVwwUbhtFiAppSTYnqhobI0-N7tAU_Rj63WwCHyHZF6u5TesI1psTqhv9cVn3XyGjOvVsmdRpp2p7R1HZRwrhB7tv0ccatGXa-w8tO0g1WF1GJ1cHm3FHABj8Ra7hl2A-W57sxzB-catblu2gsvqKpgVLL2ZIhK6cLNzWhlZSv4pc5Iu8ScyxrgQvEB5viTIQP0VcsvCy-8JXTihgSlxqdr_a6hyQv13uzaBvTa5C8nFbxqZEoh2leftdioX9jOXbPN35_gI9YZOcBXNHC6bbiJJRXCnY1PL-84AlIVluoHvDvYVP8sDKyQ",
+    "CloudFront-Forwarded-Proto": "https",
+    "CloudFront-Is-Desktop-Viewer": "true",
+    "CloudFront-Is-Mobile-Viewer": "false",
+    "CloudFront-Is-SmartTV-Viewer": "false",
+    "CloudFront-Is-Tablet-Viewer": "false",
+    "CloudFront-Viewer-Country": "SK",
+    "Host": "67183kcdkf.execute-api.eu-central-1.amazonaws.com",
+    "User-Agent": "vscode-restclient",
+    "Via": "1.1 4f41a6860ab116e6fd0a110c5ba1420b.cloudfront.net (CloudFront)",
+    "X-Amz-Cf-Id": "UBwnjDoH0xnyewdJwT6v1PxF2FNUTIUB6gyMQuXNd2_DrdnTiWg9WA==",
+    "X-Amzn-Trace-Id": "Root=1-61bc7725-516e1d226fba72565276b96d",
+    "X-Forwarded-For": "95.102.108.75, 130.176.219.16",
+    "X-Forwarded-Port": "443",
+    "X-Forwarded-Proto": "https"
+  },
+  "multiValueHeaders": {
+    "Accept-Encoding": [
+      "gzip, deflate"
+    ],
+    "Authorization": [
+      "eyJraWQiOiI2NTMybGtVZjRpUFIxV3lqMVZUTHRQT2tIYUtZK0JJVW1iZEZTWDZyRExFPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJmOTJlN2JmZi01ZGFmLTQ3ODAtOTk0Yy0xYzM3ZGEyNTljYzIiLCJjb2duaXRvOmdyb3VwcyI6WyJhZG1pbnMiXSwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS1jZW50cmFsLTEuYW1hem9uYXdzLmNvbVwvZXUtY2VudHJhbC0xX1JzSHNCTk1hbiIsImNvZ25pdG86dXNlcm5hbWUiOiJ0ZXN0X3VzZXIiLCJvcmlnaW5fanRpIjoiY2I3NWQxNjYtNDExNS00MmU2LWFiODMtZGExYTBlZGY2MTI5IiwiYXVkIjoiNmhrbWtkZjJqMTFmdDVwb3RwMHBhb3FvMXAiLCJldmVudF9pZCI6ImVkN2RjMGZhLWFmMGYtNDk2Ni1iOTQyLWJmYjg1NTkwNDMwYiIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjM5NzQxMTY1LCJleHAiOjE2Mzk3NDQ3NjUsImlhdCI6MTYzOTc0MTE2NSwianRpIjoiNWE3Y2YxYjUtNjk3My00MmE3LWI2OWEtMjY2N2U3N2E4YTlhIiwiZW1haWwiOiJtaXJvLmFkYW15QGdtYWlsLmNvbSJ9.n-mFfIWxCphXhJFPaubqIP4w3O0Au3ddVwwUbhtFiAppSTYnqhobI0-N7tAU_Rj63WwCHyHZF6u5TesI1psTqhv9cVn3XyGjOvVsmdRpp2p7R1HZRwrhB7tv0ccatGXa-w8tO0g1WF1GJ1cHm3FHABj8Ra7hl2A-W57sxzB-catblu2gsvqKpgVLL2ZIhK6cLNzWhlZSv4pc5Iu8ScyxrgQvEB5viTIQP0VcsvCy-8JXTihgSlxqdr_a6hyQv13uzaBvTa5C8nFbxqZEoh2leftdioX9jOXbPN35_gI9YZOcBXNHC6bbiJJRXCnY1PL-84AlIVluoHvDvYVP8sDKyQ"
+    ],
+    "CloudFront-Forwarded-Proto": [
+      "https"
+    ],
+    "CloudFront-Is-Desktop-Viewer": [
+      "true"
+    ],
+    "CloudFront-Is-Mobile-Viewer": [
+      "false"
+    ],
+    "CloudFront-Is-SmartTV-Viewer": [
+      "false"
+    ],
+    "CloudFront-Is-Tablet-Viewer": [
+      "false"
+    ],
+    "CloudFront-Viewer-Country": [
+      "SK"
+    ],
+    "Host": [
+      "67183kcdkf.execute-api.eu-central-1.amazonaws.com"
+    ],
+    "User-Agent": [
+      "vscode-restclient"
+    ],
+    "Via": [
+      "1.1 4f41a6860ab116e6fd0a110c5ba1420b.cloudfront.net (CloudFront)"
+    ],
+    "X-Amz-Cf-Id": [
+      "UBwnjDoH0xnyewdJwT6v1PxF2FNUTIUB6gyMQuXNd2_DrdnTiWg9WA=="
+    ],
+    "X-Amzn-Trace-Id": [
+      "Root=1-61bc7725-516e1d226fba72565276b96d"
+    ],
+    "X-Forwarded-For": [
+      "95.102.108.75, 130.176.219.16"
+    ],
+    "X-Forwarded-Port": [
+      "443"
+    ],
+    "X-Forwarded-Proto": [
+      "https"
+    ]
+  },
+  "queryStringParameters": null,
+  "multiValueQueryStringParameters": null,
+  "pathParameters": null,
+  "stageVariables": null,
+  "requestContext": {
+    "resourceId": "lpcuyd",
+    "authorizer": {
+      "claims": {
+        "sub": "f92e7bff-5daf-4780-994c-1c37da259cc2",
+        "cognito:groups": "admins",
+        "email_verified": "true",
+        "iss": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_RsHsBNMan",
+        "cognito:username": "test_user",
+        "origin_jti": "cb75d166-4115-42e6-ab83-da1a0edf6129",
+        "aud": "6hkmkdf2j11ft5potp0paoqo1p",
+        "event_id": "ed7dc0fa-af0f-4966-b942-bfb85590430b",
+        "token_use": "id",
+        "auth_time": "1639741165",
+        "exp": "Fri Dec 17 12:39:25 UTC 2021",
+        "iat": "Fri Dec 17 11:39:25 UTC 2021",
+        "jti": "5a7cf1b5-6973-42a7-b69a-2667e77a8a9a",
+        "email": "miro.adamy@gmail.com"
+      }
+    },
+    "resourcePath": "/hello",
+    "httpMethod": "GET",
+    "extendedRequestId": "KfeN4EYeliAFXTQ=",
+    "requestTime": "17/Dec/2021:11:40:21 +0000",
+    "path": "/prod/hello",
+    "accountId": "469225108435",
+    "protocol": "HTTP/1.1",
+    "stage": "prod",
+    "domainPrefix": "67183kcdkf",
+    "requestTimeEpoch": 1639741221469,
+    "requestId": "a2ab7d4d-f8d4-448e-a557-3f0a5dd6bc77",
+    "identity": {
+      "cognitoIdentityPoolId": null,
+      "accountId": null,
+      "cognitoIdentityId": null,
+      "caller": null,
+      "sourceIp": "95.102.108.75",
+      "principalOrgId": null,
+      "accessKey": null,
+      "cognitoAuthenticationType": null,
+      "cognitoAuthenticationProvider": null,
+      "userArn": null,
+      "userAgent": "vscode-restclient",
+      "user": null
+    },
+    "domainName": "67183kcdkf.execute-api.eu-central-1.amazonaws.com",
+    "apiId": "67183kcdkf"
+  },
+  "body": null,
+  "isBase64Encoded": false
+}
+```
+
+Groups can be used for access control 
+
+07-cognito-groups
+## 08 - Cognito Identity Pools
+
 ---
 
 ## 14 - TS recap
