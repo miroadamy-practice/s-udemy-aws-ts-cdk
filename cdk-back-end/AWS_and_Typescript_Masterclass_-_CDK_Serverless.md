@@ -2755,6 +2755,305 @@ Stack ARN:
 arn:aws:cloudformation:eu-central-1:469225108435:stack/SpaceFinder/5eea0820-5870-11ec-a226-061d7a8cfc38
 ```
 
+### Testing identity
+
+- added getBuckets function
+- user `test_user` has no group in UserPool
+
+```json
+{
+  message: "Access Denied",
+  code: "AccessDenied",
+  region: null,
+  time: {
+  },
+  requestId: "GM2YC2MF7CMVRWCX",
+  extendedRequestId: "BTTxAApq557UqjNOzYJGhgAHKnxI79PZ+wWOvGqIBDldF5gvjXsGBxPEgVsDX0DpegZDSTbXctY=",
+  cfId: undefined,
+  statusCode: 403,
+  retryable: false,
+  retryDelay: 15.195181600301666,
+}
+```
+
+bucket => undefined
+
+After adding the user to admins group:
+
+```json
+{
+  Buckets: [
+    {
+      Name: "atmosphere-docs-publisher-pipelinebucket-13584wbaypu4a",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "atmosphere-docs-publisher-stack-pipelinebucket-1vkzhpuffn3jw",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "atmosphere.pe.reliant.net",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "aws-000000-cloudtrail-bucket-469225108435",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "aws-000000-dev-pfi-s3-cloudtrail-f993c42d5d94",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "aws-000000-staging-s3-cloudtrail-d55ae2714f32",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "aws-000000-test-trailbucket-xacajphh2n49",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "aws-codestar-ca-central-1-469225108435",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "aws-codestar-ca-central-1-469225108435-test-codestar-pipe",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "aws-perspective-accesslogsbucket-2rkkn8cb3w6p",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "aws-sam-cli-managed-default-samclisourcebucket-le1tzalhcdcv",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "aws-stackset-drift-detec-serverlessdeploymentbuck-1i3jcfyd3g7wf",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "cdk-hnb659fds-assets-469225108435-eu-central-1",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "cdktoolkit-stagingbucket-o66kpow1db31",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "cf-templates-cod90gs5ld9b-ca-central-1",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "cf-templates-cod90gs5ld9b-us-east-1",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "cf-templates-cod90gs5ld9b-us-east-2",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "cf-templates-cod90gs5ld9b-us-west-1",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "cfn-test-bucket-000",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "codepipeline-us-east-1-707035415740",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "codesuite-demo-lambdacopy-11u5l3eh1ge-localbucket-cxwcqqtyx205",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "codesuite-demo-pipeline-k1nrvleque-artifactbucket-18p2zu2q87y6",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "config-bucket-469225108435",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "config-bucket-469225108435-manual",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "config-bucket-ca-central-1-469225108435",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "config-bucket-us-east-1-469225108435",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "config-bucket-us-west-2-469225108435",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "ct-bucket-469225108435",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "dive-personalize-events-1",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "docs.atmosphere.pe.reliant.net",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "global-s3-logs-logs-20191108132607049200000001",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "logs-000000",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "logs-pvtr",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "logzio-aws-serverless-test",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "pe.reliant.net",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "pvtr-logs",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "resources-pckg-dev-serverlessdeploymentbucket-10scqkldy24f0",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "resources-pckg-nothing-serverlessdeploymentbucket-1v1djcsazikhi",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "saas-identity-with-cognito-iden-destinationbucket-urhlxpa7zsyf",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "saas-identity-with-cognito-identit-artifactbucket-jyn1g3ocz6j0",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "session-manager-logs-469225108435",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "signup-dev.hv3.xyz",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "stackset-my-stack-set-65e20d00-69b9-configbucket-wpivuvqt55kw",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "stackset-my-stack-set-a1be8021-0bf0-configbucket-1297xtwlma389",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "stackset-my-stack-set-cc887279-e71f-configbucket-p63zdl4r2lew",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "stackset-stacksetoverrideandupdatetes-trailbucket-1p8qnz3a0vdx3",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "test-automation-scripts",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "test-ct-stack-trailbucket-v32pu3w2pg3a",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "test-no-tag-bucket-1",
+      CreationDate: {
+      },
+    },
+    {
+      Name: "test-s3-sys-testcustomer-20201207175115286500000003",
+      CreationDate: {
+      },
+    },
+  ],
+  Owner: {
+    ID: "d8092b714a872b772b13eb173dc758499d17a90ce86934bc73b214115be7d5a4",
+  },
+}
+```
+
+AWS Cognito is much more powerful than presented in the last 2 sections. If you want to dig even deeper, I recommend the following resources:
+
+Fine-grained Access Control with Amazon Cognito Identity Pools - 20min
+<https://www.youtube.com/watch?v=tAUmz94O2Qo>
+
+Serverless Authentication and Authorization - 53min
+<https://www.youtube.com/watch?v=VZqG7HjT2AQ>
+
+Building Multi-Tenant Solutions on AWS (deconstructing SaaS) - 57:32min
+<https://www.youtube.com/watch?v=mwQ5lipGTBI>
+
+## 09-13 Chapters 
+
+See [this file](./AWS_and_Typescript_Masterclass_-_Frontend.md)
 ---
 
 ## 14 - TS recap
