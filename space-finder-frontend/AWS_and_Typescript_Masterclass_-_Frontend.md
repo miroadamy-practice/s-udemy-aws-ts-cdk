@@ -105,6 +105,8 @@ Cleanup after generated + new folders
 
 09-model
 
+#### Child Component
+
 ## 10 Using AWS in React with Amplify
 
 ## 11 Deployment
