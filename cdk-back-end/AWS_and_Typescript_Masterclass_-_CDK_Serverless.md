@@ -2700,7 +2700,59 @@ Resources
 Outputs
 [+] Output IdentityPoolId IdentityPoolId: {"Value":{"Ref":"SpaceFinderIdentityPool"}}
 
+```
 
+Error - had typo 
+
+```diff
+diff --git a/cdk-back-end/infrastructure/auth/IdentityPoolWrapper.ts b/cdk-back-end/infrastructure/auth/IdentityPoolWrapper.ts
+index d72df91..2777eac 100644
+--- a/cdk-back-end/infrastructure/auth/IdentityPoolWrapper.ts
++++ b/cdk-back-end/infrastructure/auth/IdentityPoolWrapper.ts
+ 
+ export class IdentityPoolWrapper {
+@@ -36,7 +35,7 @@ export class IdentityPoolWrapper {
+             allowUnauthenticatedIdentities: true,
+             cognitoIdentityProviders: [{
+                 clientId: this.userPoolClient.userPoolClientId,
+-                providerName: this.userPoolClient.userPoolClientName
++                providerName: this.userPool.userPoolProviderName
+             }]
+         });
+@@ -95,14 +95,15 @@ export class IdentityPoolWrapper {
+             ],
+             resources: ['*']
+         }))
++    
+     }
+ 
+     private attachRoles(){
+         new CfnIdentityPoolRoleAttachment(this.scope, 'RolesAttachment', {
+             identityPoolId: this.identityPool.ref,
+             roles: {
+-                'authenticatedRole': this.authenticatedRole.roleArn,
+-                'unauthenticatedRole': this.unAuthenticatedRole.roleArn,
++                'authenticated': this.authenticatedRole.roleArn,
++                'unauthenticated': this.unAuthenticatedRole.roleArn
+             },
+             roleMappings: {
+                 adminsMapping: {
+
+```
+
+Now deployed:
+
+```text
+ ✅  Space-Finder-Backend (SpaceFinder)
+
+Outputs:
+Space-Finder-Backend.IdentityPoolId = eu-central-1:51711005-da04-4a95-9154-96c73393713f
+Space-Finder-Backend.SpaceApiEndpointDA7E4050 = https://67183kcdkf.execute-api.eu-central-1.amazonaws.com/prod/
+Space-Finder-Backend.UserPoolClientId = 6hkmkdf2j11ft5potp0paoqo1p
+Space-Finder-Backend.UserPoolId = eu-central-1_RsHsBNMan
+
+Stack ARN:
+arn:aws:cloudformation:eu-central-1:469225108435:stack/SpaceFinder/5eea0820-5870-11ec-a226-061d7a8cfc38
 ```
 
 ---

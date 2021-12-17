@@ -1,8 +1,7 @@
-
-import { CfnOutput } from "aws-cdk-lib";
+ import { CfnOutput } from "aws-cdk-lib";
 import { UserPool, UserPoolClient, CfnIdentityPool, CfnIdentityPoolRoleAttachment } from "aws-cdk-lib/aws-cognito";
 import { Construct } from "constructs";
-import {Effect, FederatedPrincipal, PolicyStatement, Role} from  "aws-cdk-lib/aws-iam";
+import { Effect, FederatedPrincipal, PolicyStatement, Role } from "aws-cdk-lib/aws-iam";
 
 
 export class IdentityPoolWrapper {
@@ -36,7 +35,7 @@ export class IdentityPoolWrapper {
             allowUnauthenticatedIdentities: true,
             cognitoIdentityProviders: [{
                 clientId: this.userPoolClient.userPoolClientId,
-                providerName: this.userPoolClient.userPoolClientName
+                providerName: this.userPool.userPoolProviderName
             }]
         });
         // NOTE the ref use !!!
@@ -51,13 +50,13 @@ export class IdentityPoolWrapper {
         this.authenticatedRole = new Role(this.scope, 'CognitoDefaultAuthenticatedRole', {
             assumedBy: new FederatedPrincipal('cognito-identity.amazonaws.com', {
                 StringEquals: {
-                    'cognito-identity.amazonaws.com:aud': this.identityPool.ref,
+                    'cognito-identity.amazonaws.com:aud': this.identityPool.ref
                 },
                 'ForAnyValue:StringLike': {
                     'cognito-identity.amazonaws.com:amr': 'authenticated'
                 }
             },
-            'sts:AssumeRoleWithWebIdentity'
+                'sts:AssumeRoleWithWebIdentity'
             )
         });
         // we should do now
@@ -66,28 +65,29 @@ export class IdentityPoolWrapper {
         this.unAuthenticatedRole = new Role(this.scope, 'CognitoDefaultUnAuthenticatedRole', {
             assumedBy: new FederatedPrincipal('cognito-identity.amazonaws.com', {
                 StringEquals: {
-                    'cognito-identity.amazonaws.com:aud': this.identityPool.ref,
+                    'cognito-identity.amazonaws.com:aud': this.identityPool.ref
                 },
                 'ForAnyValue:StringLike': {
                     'cognito-identity.amazonaws.com:amr': 'unauthenticated'
                 }
             },
-            'sts:AssumeRoleWithWebIdentity'
+                'sts:AssumeRoleWithWebIdentity'
             )
         });
 
         this.adminRole = new Role(this.scope, 'CognitoAdminRole', {
             assumedBy: new FederatedPrincipal('cognito-identity.amazonaws.com', {
                 StringEquals: {
-                    'cognito-identity.amazonaws.com:aud': this.identityPool.ref,
+                    'cognito-identity.amazonaws.com:aud': this.identityPool.ref
                 },
                 'ForAnyValue:StringLike': {
                     'cognito-identity.amazonaws.com:amr': 'authenticated'
                 }
             },
-            'sts:AssumeRoleWithWebIdentity'
+                'sts:AssumeRoleWithWebIdentity'
             )
         });
+
         this.adminRole.addToPolicy(new PolicyStatement({
             effect: Effect.ALLOW,
             actions: [
@@ -95,14 +95,15 @@ export class IdentityPoolWrapper {
             ],
             resources: ['*']
         }))
+    
     }
 
     private attachRoles(){
         new CfnIdentityPoolRoleAttachment(this.scope, 'RolesAttachment', {
             identityPoolId: this.identityPool.ref,
             roles: {
-                'authenticatedRole': this.authenticatedRole.roleArn,
-                'unauthenticatedRole': this.unAuthenticatedRole.roleArn,
+                'authenticated': this.authenticatedRole.roleArn,
+                'unauthenticated': this.unAuthenticatedRole.roleArn
             },
             roleMappings: {
                 adminsMapping: {
@@ -113,4 +114,7 @@ export class IdentityPoolWrapper {
             }
         })
     }
+
+
 }
+
