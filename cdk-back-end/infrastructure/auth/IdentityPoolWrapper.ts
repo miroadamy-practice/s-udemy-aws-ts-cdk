@@ -1,6 +1,6 @@
 
 import { CfnOutput } from "aws-cdk-lib";
-import { UserPool, UserPoolClient, CfnIdentityPool, CfnIdentityPoolProps } from "aws-cdk-lib/aws-cognito";
+import { UserPool, UserPoolClient, CfnIdentityPool, CfnIdentityPoolRoleAttachment } from "aws-cdk-lib/aws-cognito";
 import { Construct } from "constructs";
 import {Effect, FederatedPrincipal, PolicyStatement, Role} from  "aws-cdk-lib/aws-iam";
 
@@ -14,7 +14,7 @@ export class IdentityPoolWrapper {
     private identityPool: CfnIdentityPool;
     private authenticatedRole: Role;
     private unAuthenticatedRole: Role;
-    private adminRole: Role;
+    public adminRole: Role;
 
 
 
@@ -28,6 +28,7 @@ export class IdentityPoolWrapper {
     private initialize() {
         this.initializeIdentityPool();
         this.initializeRoles();
+        this.attachRoles();
     }
 
     private initializeIdentityPool(){
@@ -75,7 +76,7 @@ export class IdentityPoolWrapper {
             )
         });
 
-        this.adminRole = new Role(this.scope, 'CognitoDefaultAdminRole', {
+        this.adminRole = new Role(this.scope, 'CognitoAdminRole', {
             assumedBy: new FederatedPrincipal('cognito-identity.amazonaws.com', {
                 StringEquals: {
                     'cognito-identity.amazonaws.com:aud': this.identityPool.ref,
@@ -93,9 +94,23 @@ export class IdentityPoolWrapper {
                 's3:List*'
             ],
             resources: ['*']
-
         }))
+    }
 
-        
+    private attachRoles(){
+        new CfnIdentityPoolRoleAttachment(this.scope, 'RolesAttachment', {
+            identityPoolId: this.identityPool.ref,
+            roles: {
+                'authenticatedRole': this.authenticatedRole.roleArn,
+                'unauthenticatedRole': this.unAuthenticatedRole.roleArn,
+            },
+            roleMappings: {
+                adminsMapping: {
+                    type: 'Token',
+                    ambiguousRoleResolution: 'AuthenticatedRole',
+                    identityProvider: `${this.userPool.userPoolProviderName}:${this.userPoolClient.userPoolClientId}`
+                }
+            }
+        })
     }
 }

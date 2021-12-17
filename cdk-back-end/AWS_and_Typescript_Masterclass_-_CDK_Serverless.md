@@ -1631,7 +1631,6 @@ X-Amz-Cf-Id: TX8BMy32TLLzxnW2fxZN0vDW_bc76QbhcjLJ4L_OeFcqrcP7BB_Nnw==
 
 Saved as 06-secondary-index
 
-
 ### Update
 
 - combination of queryParameter AND body
@@ -1687,7 +1686,7 @@ async function handler (event: APIGatewayProxyEvent, context: Context): Promise<
 Key: {[PRIMARY_KEY]: spaceId},
 ```
 
-The integration - add 
+The integration - add
 
 ```text
 Stack Space-Finder-Backend (SpaceFinder)
@@ -1755,8 +1754,7 @@ Resources
 
 See 06-update tag
 
-
-### Delete 
+### Delete
 
 Does not return anything, just retrieves the spaceId, uses filter
 
@@ -1827,7 +1825,6 @@ export interface Space {
 
 ## 07 - AWS Cognito - User pools
 
-
 - user pools: directory, basic authentication - JWT
 - identity pools: access control, using AWS services
 
@@ -1890,13 +1887,12 @@ Run `npm audit` for details.
 Back to integration:
 
 - domain: <https://test-pool-miro.auth.eu-central-1.amazoncognito.com>
-- app client: 
+- app client:
   - name: test-pool-client
   - NO generate client secret
   - enable all auth flows
 
 => 4tpsgb67gvgfiu4fi7ou9jn28p
-
 
 Create test_user, Qwerty123!
 
@@ -1907,7 +1903,6 @@ aws cognito-idp admin-set-user-password --user-pool-id eu-central-1_vMurur9r9 --
 ```
 
 Run the test:
-
 
 ```typescript
 import { config } from './config';
@@ -2013,7 +2008,6 @@ Returns this:
 
 Before - can call /hello/ OK
 
-
 ```text
 GET {{endpoint}}/hello
 ---
@@ -2038,7 +2032,7 @@ Restrict access to API GW
 
 Console - Authorizers, create new Authorizer, Cognito
 
-Token Source => `Authorization`, 
+Token Source => `Authorization`,
 
 set Authorizer to hello
 
@@ -2113,6 +2107,7 @@ Resources
 Outputs
 [+] Output UserPoolId UserPoolId: {"Value":{"Ref":"SpaceUserPool6AB542DC"}}
 ```
+
 See 07-authorizer-wrapper
 
 Add authorizer and attach to hello
@@ -2192,6 +2187,7 @@ Create group via cdk - must use Cfn construct
 Change the code of hello to print event, deploy, add test user to admins
 
 Formatted: (note the cognito:groups)
+
 ```json
 {
   "resource": "/hello",
@@ -2322,9 +2318,10 @@ Formatted: (note the cognito:groups)
 }
 ```
 
-Groups can be used for access control 
+Groups can be used for access control
 
 07-cognito-groups
+
 ## 08 - Cognito Identity Pools
 
 Manually created demo identity pool
@@ -2586,6 +2583,7 @@ Refactor the tester method and call it
 And now for all of this in CDK :-)
 
 Tag: 08-manual-setup
+
 ### Identity pools in CDK
 
 - new file - IdentityPoolWrapper.ts
@@ -2620,6 +2618,90 @@ Must use the generated IAM roles for the trust relationship as well as 'View Pol
 We have added admin specific role that actually has some privileges.
 
 We are still not done - need to connect roles to pool, but interim state is in 08-iam-roles-creation
+
+### Attaching roles
+
+See `attachRoles()`
+
+CDK/Typescript catches issues with order of initialization:
+
+```text
+    private initialize() {
+        this.createUserPool();
+        this.addUserPoolClient();
+        this.createAuthorizer();
+        this.createAdminsGroup();
+        this.initializeIdentityPoolWrapper();
+    }
+
+---
+✨  Done in 0.06s.
+/Users/miroadamy/prj/s-udemy-aws-ts-cdk/cdk-back-end/infrastructure/auth/AuthorizerWrapper.ts:79
+            roleArn: this.identityPoolWrapper.adminRole.roleArn
+                                              ^
+TypeError: Cannot read properties of undefined (reading 'adminRole')
+
+```
+
+Diff:
+
+```text
+Stack Space-Finder-Backend (SpaceFinder)
+IAM Statement Changes
+┌───┬──────────────────────────────┬────────┬──────────────────────────────┬──────────────────────────────┬───────────────────────────────┐
+│   │ Resource                     │ Effect │ Action                       │ Principal                    │ Condition                     │
+├───┼──────────────────────────────┼────────┼──────────────────────────────┼──────────────────────────────┼───────────────────────────────┤
+│ + │ ${CognitoDefaultAdminRole.Ar │ Allow  │ sts:AssumeRoleWithWebIdentit │ Federated:cognito-identity.a │ "StringEquals": {             │
+│   │ n}                           │        │ y                            │ mazonaws.com                 │   "cognito-identity.amazonaws │
+│   │                              │        │                              │                              │ .com:aud": "${SpaceFinderIden │
+│   │                              │        │                              │                              │ tityPool}"                    │
+│   │                              │        │                              │                              │ },                            │
+│   │                              │        │                              │                              │ "ForAnyValue:StringLike": {   │
+│   │                              │        │                              │                              │   "cognito-identity.amazonaws │
+│   │                              │        │                              │                              │ .com:amr": "authenticated"    │
+│   │                              │        │                              │                              │ }                             │
+├───┼──────────────────────────────┼────────┼──────────────────────────────┼──────────────────────────────┼───────────────────────────────┤
+│ + │ ${CognitoDefaultAuthenticate │ Allow  │ sts:AssumeRoleWithWebIdentit │ Federated:cognito-identity.a │ "StringEquals": {             │
+│   │ dRole.Arn}                   │        │ y                            │ mazonaws.com                 │   "cognito-identity.amazonaws │
+│   │                              │        │                              │                              │ .com:aud": "${SpaceFinderIden │
+│   │                              │        │                              │                              │ tityPool}"                    │
+│   │                              │        │                              │                              │ },                            │
+│   │                              │        │                              │                              │ "ForAnyValue:StringLike": {   │
+│   │                              │        │                              │                              │   "cognito-identity.amazonaws │
+│   │                              │        │                              │                              │ .com:amr": "authenticated"    │
+│   │                              │        │                              │                              │ }                             │
+├───┼──────────────────────────────┼────────┼──────────────────────────────┼──────────────────────────────┼───────────────────────────────┤
+│ + │ ${CognitoDefaultUnAuthentica │ Allow  │ sts:AssumeRoleWithWebIdentit │ Federated:cognito-identity.a │ "StringEquals": {             │
+│   │ tedRole.Arn}                 │        │ y                            │ mazonaws.com                 │   "cognito-identity.amazonaws │
+│   │                              │        │                              │                              │ .com:aud": "${SpaceFinderIden │
+│   │                              │        │                              │                              │ tityPool}"                    │
+│   │                              │        │                              │                              │ },                            │
+│   │                              │        │                              │                              │ "ForAnyValue:StringLike": {   │
+│   │                              │        │                              │                              │   "cognito-identity.amazonaws │
+│   │                              │        │                              │                              │ .com:amr": "unauthenticated"  │
+│   │                              │        │                              │                              │ }                             │
+├───┼──────────────────────────────┼────────┼──────────────────────────────┼──────────────────────────────┼───────────────────────────────┤
+│ + │ *                            │ Allow  │ s3:List*                     │ AWS:${CognitoDefaultAdminRol │                               │
+│   │                              │        │                              │ e}                           │                               │
+└───┴──────────────────────────────┴────────┴──────────────────────────────┴──────────────────────────────┴───────────────────────────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+Resources
+[+] AWS::Cognito::IdentityPool SpaceFinderIdentityPool SpaceFinderIdentityPool 
+[+] AWS::IAM::Role CognitoDefaultAuthenticatedRole CognitoDefaultAuthenticatedRoleC5D5C31E 
+[+] AWS::IAM::Role CognitoDefaultUnAuthenticatedRole CognitoDefaultUnAuthenticatedRole6CA311FD 
+[+] AWS::IAM::Role CognitoDefaultAdminRole CognitoDefaultAdminRole142FBDE3 
+[+] AWS::IAM::Policy CognitoDefaultAdminRole/DefaultPolicy CognitoDefaultAdminRoleDefaultPolicy4BFCA7C8 
+[+] AWS::Cognito::IdentityPoolRoleAttachment RolesAttachment RolesAttachment 
+[~] AWS::Cognito::UserPoolGroup admins admins 
+ └─ [+] RoleArn
+     └─ {"Fn::GetAtt":["CognitoDefaultAdminRole142FBDE3","Arn"]}
+
+Outputs
+[+] Output IdentityPoolId IdentityPoolId: {"Value":{"Ref":"SpaceFinderIdentityPool"}}
+
+
+```
 
 ---
 
