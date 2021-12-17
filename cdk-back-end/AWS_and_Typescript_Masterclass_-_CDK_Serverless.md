@@ -2327,6 +2327,268 @@ Groups can be used for access control
 07-cognito-groups
 ## 08 - Cognito Identity Pools
 
+Manually created demo identity pool
+
+```typescript
+// Initialize the Amazon Cognito credentials provider
+CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
+    getApplicationContext(),
+    "eu-central-1:b4ba0d92-fd51-43f7-98c4-60b71b0ed071", // Identity pool ID
+    Regions.EU_CENTRAL_1 // Region
+);
+```
+
+Select Use role from token.
+
+- add the Identity pool ID to config and Amplify config
+- add method to get temp credentials
+
+Refactor the tester method and call it
+
+```json
+{
+  expired: false,
+  expireTime: {
+  },
+  refreshCallbacks: [
+  ],
+  accessKeyId: "ASIAW2P766PJUN3FN5JQ",
+  sessionToken: "IQoJb3JpZ2luX2VjEMD//////////wEaDGV1LWNlbnRyYWwtMSJIMEYCIQDZTcCy8aVt/vR76JQpgzlVEb4WD+LgN4OVWeBYSx19ZQIhAOYBr3c1HeJrIS4D6/nYjpjnEBLYKeuAsDfjJ7p3bGfoKt8ECKn//////////wEQAxoMNDY5MjI1MTA4NDM1Igz1VGbmIR4aeEIzaZ8qswQvU6ItL+KsPtoL9VqgHHIZwfYqGw+w1OJVCgLl32Z/pJeEyxdkqpXVDtHaHa8JPYDyhXia81Xl87lHzM8Sn/ORgrz84+KS6+AaVgr6Sj4HhFFszSZMfvx+iLR0wCkyR+I151Mxxc7OE2XHaUanG5s7j099/kS+iR9zsx+FfPs4i45y6OWWdcPOpYUPy6RFV8tRZBNCuEBed+xrpE/w8Znbfv8VJf0/zwe3wcfRigBHb64VuE9Q436Gs/ypg8IBQjvd9AFRjcRH1t7EjMyk2KvVM6+8bqjtiAlumS0qlX0hiQkFu1OS1b7VRs5MVQ7+a53Xz7idBlTMKzbvFFdI6zC+1jqUwy65fdCtS3Qqo1blyVQBOLE8u6NCMZLZ/IvARnsfcvLGScFd8n+/VH4EI1L1OMgfThFMUjbv+uZ9WERsVO6lsoNGdea/bxdp4NgRQeGSS1NfoMLvyHE75/0Wdt8uvcF4+AnVsWmBNxZrs//XCfqlBrNKzu0jjkKczrFbSyNeSUrZiPz7+IStB4+j+YJo8bjSI43HZ47qJyOolmeNBLMNfmwumw4faDGeMfybvnwGOVnPDj9l7qbOjscEsZyLFkaKOAk7WARqbYEM3Rw55eSC+OtPj/CAU6eDI/c/fsA72jfEjewcS5gPqoqXcqrb68LpR3x2gVgg3ebjHL960cC/16PP70BmepkUDfACOF8BzPGlGiS6wqvWFpsxc1Xq/6NGQ1IlK0r00CY4uhfbyrTx3jCl2/KNBjqEAgwWq9PZFOH+YxgL+0Lytk9z5z9m7JUpd4GXEthJjQ2TLfFr3r3IIeLfcZR0vyQsXRcMzvUnH9QKXmaTE7uRalL4phzRZGx9V+IIn6YxEo4UBmtlysbL18bdEBlvbXFHXrUSOMKTbyQmfD32GsYvsXDfBQ2fmxVmWbvIw3lmHMwR45KdQ/KlsGCvNQSheWd9zwO3ngxB6pEqdHiBGtyyCbSrYuiDRnX9AeS6FCotzLh80yJLRqfbS5I2VkRZL1LvuzrL7Ml94Dzw0smpNgpe12G6Ac73/F9lGimxiTaGeFRMQfbxhm9fPkdylGh+z4UZZxwRm7ciQvC5fkeUGcLv120hyPKR",
+  params: {
+    IdentityPoolId: "eu-central-1:b4ba0d92-fd51-43f7-98c4-60b71b0ed071",
+    Logins: {
+      "cognito-idp.eu-central-1.amazonaws.com/eu-central-1_RsHsBNMan": "eyJraWQiOiI2NTMybGtVZjRpUFIxV3lqMVZUTHRQT2tIYUtZK0JJVW1iZEZTWDZyRExFPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJmOTJlN2JmZi01ZGFmLTQ3ODAtOTk0Yy0xYzM3ZGEyNTljYzIiLCJjb2duaXRvOmdyb3VwcyI6WyJhZG1pbnMiXSwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS1jZW50cmFsLTEuYW1hem9uYXdzLmNvbVwvZXUtY2VudHJhbC0xX1JzSHNCTk1hbiIsImNvZ25pdG86dXNlcm5hbWUiOiJ0ZXN0X3VzZXIiLCJvcmlnaW5fanRpIjoiMzYxN2Y3OTgtODIzOS00M2U2LWJjZmUtNTJkODg4ZWI2YjZjIiwiYXVkIjoiNmhrbWtkZjJqMTFmdDVwb3RwMHBhb3FvMXAiLCJldmVudF9pZCI6ImU5YTQ2ODI2LTU3YTQtNDhhZC04NDQ4LTM2YjRjMTk2YzlmMSIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjM5NzU1MTcyLCJleHAiOjE2Mzk3NTg3NzIsImlhdCI6MTYzOTc1NTE3MiwianRpIjoiMWE1NWExY2MtNmJkZC00NTJhLTkyMjAtMTUyNzAxNDM3YWRkIiwiZW1haWwiOiJtaXJvLmFkYW15QGdtYWlsLmNvbSJ9.g-CLgjQEbcS8ctIJfFCKAWobI3udSM7OyogmlStdCqb7YhAoN7wX0uUg5-aeQ07dForwRDJqMfTtlzyTdOX_6YHM3L9r_tlqkXLr9mNZ1BRlP2y4tLfwllXYf6mRhIUeeAITMdesNwFTwoc4IFig4rgQGRH6N226mZNA7LK8GySDkbAW33Q8xluuNJPyHLNklU1fUUZdrrDA8C-UPPxXAkHXpQqEuCPzePCG7tvLJp1CumpS0JW2NzV22gzDohYuhQT5ekCDKt61cSFDxjLP6V93nG5tU_hBf1uE6mu4XcKQshWYA045r1o-Ga4YsTTqTKkxVyZGCy_F-dcdddVpJw",
+    },
+    RoleSessionName: "web-identity",
+    IdentityId: "eu-central-1:1027035b-516a-42af-a36e-2a57a58a4805",
+  },
+  data: {
+    IdentityId: "eu-central-1:1027035b-516a-42af-a36e-2a57a58a4805",
+    Credentials: {
+      AccessKeyId: "ASIAW2P766PJUN3FN5JQ",
+      SecretKey: "ChO2bjnUK8jp6LxZTNfe++d52AAirFlVKDoG/4yo",
+      SessionToken: "IQoJb3JpZ2luX2VjEMD//////////wEaDGV1LWNlbnRyYWwtMSJIMEYCIQDZTcCy8aVt/vR76JQpgzlVEb4WD+LgN4OVWeBYSx19ZQIhAOYBr3c1HeJrIS4D6/nYjpjnEBLYKeuAsDfjJ7p3bGfoKt8ECKn//////////wEQAxoMNDY5MjI1MTA4NDM1Igz1VGbmIR4aeEIzaZ8qswQvU6ItL+KsPtoL9VqgHHIZwfYqGw+w1OJVCgLl32Z/pJeEyxdkqpXVDtHaHa8JPYDyhXia81Xl87lHzM8Sn/ORgrz84+KS6+AaVgr6Sj4HhFFszSZMfvx+iLR0wCkyR+I151Mxxc7OE2XHaUanG5s7j099/kS+iR9zsx+FfPs4i45y6OWWdcPOpYUPy6RFV8tRZBNCuEBed+xrpE/w8Znbfv8VJf0/zwe3wcfRigBHb64VuE9Q436Gs/ypg8IBQjvd9AFRjcRH1t7EjMyk2KvVM6+8bqjtiAlumS0qlX0hiQkFu1OS1b7VRs5MVQ7+a53Xz7idBlTMKzbvFFdI6zC+1jqUwy65fdCtS3Qqo1blyVQBOLE8u6NCMZLZ/IvARnsfcvLGScFd8n+/VH4EI1L1OMgfThFMUjbv+uZ9WERsVO6lsoNGdea/bxdp4NgRQeGSS1NfoMLvyHE75/0Wdt8uvcF4+AnVsWmBNxZrs//XCfqlBrNKzu0jjkKczrFbSyNeSUrZiPz7+IStB4+j+YJo8bjSI43HZ47qJyOolmeNBLMNfmwumw4faDGeMfybvnwGOVnPDj9l7qbOjscEsZyLFkaKOAk7WARqbYEM3Rw55eSC+OtPj/CAU6eDI/c/fsA72jfEjewcS5gPqoqXcqrb68LpR3x2gVgg3ebjHL960cC/16PP70BmepkUDfACOF8BzPGlGiS6wqvWFpsxc1Xq/6NGQ1IlK0r00CY4uhfbyrTx3jCl2/KNBjqEAgwWq9PZFOH+YxgL+0Lytk9z5z9m7JUpd4GXEthJjQ2TLfFr3r3IIeLfcZR0vyQsXRcMzvUnH9QKXmaTE7uRalL4phzRZGx9V+IIn6YxEo4UBmtlysbL18bdEBlvbXFHXrUSOMKTbyQmfD32GsYvsXDfBQ2fmxVmWbvIw3lmHMwR45KdQ/KlsGCvNQSheWd9zwO3ngxB6pEqdHiBGtyyCbSrYuiDRnX9AeS6FCotzLh80yJLRqfbS5I2VkRZL1LvuzrL7Ml94Dzw0smpNgpe12G6Ac73/F9lGimxiTaGeFRMQfbxhm9fPkdylGh+z4UZZxwRm7ciQvC5fkeUGcLv120hyPKR",
+      Expiration: {
+      },
+    },
+  },
+  _identityId: "eu-central-1:1027035b-516a-42af-a36e-2a57a58a4805",
+  _clientConfig: {
+    region: "eu-central-1",
+  },
+  webIdentityCredentials: {
+    expired: true,
+    expireTime: null,
+    refreshCallbacks: [
+    ],
+    accessKeyId: undefined,
+    sessionToken: undefined,
+    params: {
+      IdentityPoolId: "eu-central-1:b4ba0d92-fd51-43f7-98c4-60b71b0ed071",
+      Logins: {
+        "cognito-idp.eu-central-1.amazonaws.com/eu-central-1_RsHsBNMan": "eyJraWQiOiI2NTMybGtVZjRpUFIxV3lqMVZUTHRQT2tIYUtZK0JJVW1iZEZTWDZyRExFPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJmOTJlN2JmZi01ZGFmLTQ3ODAtOTk0Yy0xYzM3ZGEyNTljYzIiLCJjb2duaXRvOmdyb3VwcyI6WyJhZG1pbnMiXSwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS1jZW50cmFsLTEuYW1hem9uYXdzLmNvbVwvZXUtY2VudHJhbC0xX1JzSHNCTk1hbiIsImNvZ25pdG86dXNlcm5hbWUiOiJ0ZXN0X3VzZXIiLCJvcmlnaW5fanRpIjoiMzYxN2Y3OTgtODIzOS00M2U2LWJjZmUtNTJkODg4ZWI2YjZjIiwiYXVkIjoiNmhrbWtkZjJqMTFmdDVwb3RwMHBhb3FvMXAiLCJldmVudF9pZCI6ImU5YTQ2ODI2LTU3YTQtNDhhZC04NDQ4LTM2YjRjMTk2YzlmMSIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjM5NzU1MTcyLCJleHAiOjE2Mzk3NTg3NzIsImlhdCI6MTYzOTc1NTE3MiwianRpIjoiMWE1NWExY2MtNmJkZC00NTJhLTkyMjAtMTUyNzAxNDM3YWRkIiwiZW1haWwiOiJtaXJvLmFkYW15QGdtYWlsLmNvbSJ9.g-CLgjQEbcS8ctIJfFCKAWobI3udSM7OyogmlStdCqb7YhAoN7wX0uUg5-aeQ07dForwRDJqMfTtlzyTdOX_6YHM3L9r_tlqkXLr9mNZ1BRlP2y4tLfwllXYf6mRhIUeeAITMdesNwFTwoc4IFig4rgQGRH6N226mZNA7LK8GySDkbAW33Q8xluuNJPyHLNklU1fUUZdrrDA8C-UPPxXAkHXpQqEuCPzePCG7tvLJp1CumpS0JW2NzV22gzDohYuhQT5ekCDKt61cSFDxjLP6V93nG5tU_hBf1uE6mu4XcKQshWYA045r1o-Ga4YsTTqTKkxVyZGCy_F-dcdddVpJw",
+      },
+      RoleSessionName: "web-identity",
+      IdentityId: "eu-central-1:1027035b-516a-42af-a36e-2a57a58a4805",
+    },
+    data: null,
+    _clientConfig: {
+      region: "eu-central-1",
+    },
+  },
+  cognito: {
+    config: {
+      credentials: [Circular],
+      credentialProvider: {
+        providers: [
+          function () { return new AWS.EnvironmentCredentials('AWS'); },
+          function () { return new AWS.EnvironmentCredentials('AMAZON'); },
+          function () { return new AWS.SharedIniFileCredentials(); },
+          function () { return new AWS.ECSCredentials(); },
+          function () { return new AWS.ProcessCredentials(); },
+          function () { return new AWS.TokenFileWebIdentityCredentials(); },
+          function () { return new AWS.EC2MetadataCredentials(); },
+        ],
+        resolveCallbacks: [
+        ],
+      },
+      region: "eu-central-1",
+      logger: null,
+      apiVersions: {
+      },
+      apiVersion: null,
+      endpoint: "cognito-identity.eu-central-1.amazonaws.com",
+      httpOptions: {
+        timeout: 120000,
+      },
+      maxRetries: undefined,
+      maxRedirects: 10,
+      paramValidation: true,
+      sslEnabled: true,
+      s3ForcePathStyle: false,
+      s3BucketEndpoint: false,
+      s3DisableBodySigning: true,
+      s3UsEast1RegionalEndpoint: "legacy",
+      s3UseArnRegion: undefined,
+      computeChecksums: true,
+      convertResponseTypes: true,
+      correctClockSkew: false,
+      customUserAgent: null,
+      dynamoDbCrc32: true,
+      systemClockOffset: 0,
+      signatureVersion: "v4",
+      signatureCache: true,
+      retryDelayOptions: {
+      },
+      useAccelerateEndpoint: false,
+      clientSideMonitoring: false,
+      endpointDiscoveryEnabled: undefined,
+      endpointCacheSize: 1000,
+      hostPrefixEnabled: true,
+      stsRegionalEndpoints: "legacy",
+      useFipsEndpoint: false,
+      useDualstackEndpoint: false,
+      params: {
+        IdentityPoolId: "eu-central-1:b4ba0d92-fd51-43f7-98c4-60b71b0ed071",
+        Logins: {
+          "cognito-idp.eu-central-1.amazonaws.com/eu-central-1_RsHsBNMan": "eyJraWQiOiI2NTMybGtVZjRpUFIxV3lqMVZUTHRQT2tIYUtZK0JJVW1iZEZTWDZyRExFPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJmOTJlN2JmZi01ZGFmLTQ3ODAtOTk0Yy0xYzM3ZGEyNTljYzIiLCJjb2duaXRvOmdyb3VwcyI6WyJhZG1pbnMiXSwiZW1haWxfdmVyaWZpZWQiOnRydWUsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC5ldS1jZW50cmFsLTEuYW1hem9uYXdzLmNvbVwvZXUtY2VudHJhbC0xX1JzSHNCTk1hbiIsImNvZ25pdG86dXNlcm5hbWUiOiJ0ZXN0X3VzZXIiLCJvcmlnaW5fanRpIjoiMzYxN2Y3OTgtODIzOS00M2U2LWJjZmUtNTJkODg4ZWI2YjZjIiwiYXVkIjoiNmhrbWtkZjJqMTFmdDVwb3RwMHBhb3FvMXAiLCJldmVudF9pZCI6ImU5YTQ2ODI2LTU3YTQtNDhhZC04NDQ4LTM2YjRjMTk2YzlmMSIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjM5NzU1MTcyLCJleHAiOjE2Mzk3NTg3NzIsImlhdCI6MTYzOTc1NTE3MiwianRpIjoiMWE1NWExY2MtNmJkZC00NTJhLTkyMjAtMTUyNzAxNDM3YWRkIiwiZW1haWwiOiJtaXJvLmFkYW15QGdtYWlsLmNvbSJ9.g-CLgjQEbcS8ctIJfFCKAWobI3udSM7OyogmlStdCqb7YhAoN7wX0uUg5-aeQ07dForwRDJqMfTtlzyTdOX_6YHM3L9r_tlqkXLr9mNZ1BRlP2y4tLfwllXYf6mRhIUeeAITMdesNwFTwoc4IFig4rgQGRH6N226mZNA7LK8GySDkbAW33Q8xluuNJPyHLNklU1fUUZdrrDA8C-UPPxXAkHXpQqEuCPzePCG7tvLJp1CumpS0JW2NzV22gzDohYuhQT5ekCDKt61cSFDxjLP6V93nG5tU_hBf1uE6mu4XcKQshWYA045r1o-Ga4YsTTqTKkxVyZGCy_F-dcdddVpJw",
+        },
+        RoleSessionName: "web-identity",
+        IdentityId: "eu-central-1:1027035b-516a-42af-a36e-2a57a58a4805",
+      },
+    },
+    isGlobalEndpoint: false,
+    endpoint: {
+      protocol: "https:",
+      host: "cognito-identity.eu-central-1.amazonaws.com",
+      port: 443,
+      hostname: "cognito-identity.eu-central-1.amazonaws.com",
+      pathname: "/",
+      path: "/",
+      href: "https://cognito-identity.eu-central-1.amazonaws.com/",
+    },
+    _events: {
+      apiCallAttempt: [
+        function EVENTS_BUBBLE(event) {
+          var baseClass = Object.getPrototypeOf(attachOn);
+          if (baseClass._events) baseClass.emit('apiCallAttempt', [event]);
+        },
+      ],
+      apiCall: [
+        function CALL_EVENTS_BUBBLE(event) {
+          var baseClass = Object.getPrototypeOf(attachOn);
+          if (baseClass._events) baseClass.emit('apiCall', [event]);
+        },
+      ],
+    },
+    MONITOR_EVENTS_BUBBLE: function EVENTS_BUBBLE(event) {
+      var baseClass = Object.getPrototypeOf(attachOn);
+      if (baseClass._events) baseClass.emit('apiCallAttempt', [event]);
+    },
+    CALL_EVENTS_BUBBLE: function CALL_EVENTS_BUBBLE(event) {
+      var baseClass = Object.getPrototypeOf(attachOn);
+      if (baseClass._events) baseClass.emit('apiCall', [event]);
+    },
+    _clientId: 1,
+  },
+  sts: {
+    config: {
+      credentials: [Circular],
+      credentialProvider: {
+        providers: [
+          function () { return new AWS.EnvironmentCredentials('AWS'); },
+          function () { return new AWS.EnvironmentCredentials('AMAZON'); },
+          function () { return new AWS.SharedIniFileCredentials(); },
+          function () { return new AWS.ECSCredentials(); },
+          function () { return new AWS.ProcessCredentials(); },
+          function () { return new AWS.TokenFileWebIdentityCredentials(); },
+          function () { return new AWS.EC2MetadataCredentials(); },
+        ],
+        resolveCallbacks: [
+        ],
+      },
+      region: "eu-central-1",
+      logger: null,
+      apiVersions: {
+      },
+      apiVersion: null,
+      endpoint: "https://sts.amazonaws.com",
+      httpOptions: {
+        timeout: 120000,
+      },
+      maxRetries: undefined,
+      maxRedirects: 10,
+      paramValidation: true,
+      sslEnabled: true,
+      s3ForcePathStyle: false,
+      s3BucketEndpoint: false,
+      s3DisableBodySigning: true,
+      s3UsEast1RegionalEndpoint: "legacy",
+      s3UseArnRegion: undefined,
+      computeChecksums: true,
+      convertResponseTypes: true,
+      correctClockSkew: false,
+      customUserAgent: null,
+      dynamoDbCrc32: true,
+      systemClockOffset: 0,
+      signatureVersion: "v4",
+      signatureCache: true,
+      retryDelayOptions: {
+      },
+      useAccelerateEndpoint: false,
+      clientSideMonitoring: false,
+      endpointDiscoveryEnabled: undefined,
+      endpointCacheSize: 1000,
+      hostPrefixEnabled: true,
+      stsRegionalEndpoints: "legacy",
+      useFipsEndpoint: false,
+      useDualstackEndpoint: false,
+      signingRegion: "us-east-1",
+    },
+    isGlobalEndpoint: true,
+    signingRegion: "us-east-1",
+    endpoint: {
+      protocol: "https:",
+      host: "sts.amazonaws.com",
+      port: 443,
+      hostname: "sts.amazonaws.com",
+      pathname: "/",
+      path: "/",
+      href: "https://sts.amazonaws.com/",
+    },
+    _events: {
+      apiCallAttempt: [
+        function EVENTS_BUBBLE(event) {
+          var baseClass = Object.getPrototypeOf(attachOn);
+          if (baseClass._events) baseClass.emit('apiCallAttempt', [event]);
+        },
+      ],
+      apiCall: [
+        function CALL_EVENTS_BUBBLE(event) {
+          var baseClass = Object.getPrototypeOf(attachOn);
+          if (baseClass._events) baseClass.emit('apiCall', [event]);
+        },
+      ],
+    },
+    MONITOR_EVENTS_BUBBLE: function EVENTS_BUBBLE(event) {
+      var baseClass = Object.getPrototypeOf(attachOn);
+      if (baseClass._events) baseClass.emit('apiCallAttempt', [event]);
+    },
+    CALL_EVENTS_BUBBLE: function CALL_EVENTS_BUBBLE(event) {
+      var baseClass = Object.getPrototypeOf(attachOn);
+      if (baseClass._events) baseClass.emit('apiCall', [event]);
+    },
+    _clientId: 2,
+  },
+}
+```
+
+And now for all of this in CDK :-)
+
+Tag: 08-manual-setup
+### Identity pools in CDK
+
+
 ---
 
 ## 14 - TS recap
