@@ -88,6 +88,9 @@ Happy hacking!
 
 ```
 
+Cleanup after generated + new folders
+
+
 ## 10 Using AWS in React with Amplify
 
 ## 11 Deployment
