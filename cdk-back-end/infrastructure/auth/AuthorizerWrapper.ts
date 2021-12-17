@@ -11,7 +11,7 @@ export class AuthorizerWrapper {
 
     private userPool: UserPool;
     private userPoolClient: UserPoolClient;
-    public userPoolAuthorizer: CognitoUserPoolsAuthorizer
+    public authorizer: CognitoUserPoolsAuthorizer
 
     constructor(scope: Construct, api: RestApi) {
         this.scope = scope;
@@ -21,6 +21,8 @@ export class AuthorizerWrapper {
 
     private initialize() {
         this.createUserPool();
+        this.addUserPoolClient();
+        this.createAuthorizer();
     }
 
     private createUserPool() {
@@ -37,5 +39,33 @@ export class AuthorizerWrapper {
         });
     }
 
+    private addUserPoolClient() {
+        this.userPoolClient = this.userPool.addClient('SpaceUserPool-client', {
+            userPoolClientName: 'SpaceUserPool-client',
+            authFlows: {
+                adminUserPassword: true,
+                custom: true,
+                userPassword: true,
+                userSrp: true
+            },
+            generateSecret: false
+        });
+        new CfnOutput(this.scope, 'UserPoolClientId', {
+            value: this.userPoolClient.userPoolClientId
+        })
+    }
+
+    private createAuthorizer(){
+        this.authorizer = new CognitoUserPoolsAuthorizer(this.scope, 'SpaceUserAuthorizer', {
+            cognitoUserPools: [this.userPool],
+            authorizerName: 'SpaceUserAuthorizer',
+            identitySource: 'method.request.header.Authorization',
+            
+        });
+        // the above is not enough, needs API attached
+        this.authorizer._attachToApi(this.api);
+
+        // also consider CfnXXXX
+    }
 
 }

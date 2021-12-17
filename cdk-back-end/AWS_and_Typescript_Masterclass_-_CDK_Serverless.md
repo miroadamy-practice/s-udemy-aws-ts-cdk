@@ -2115,6 +2115,75 @@ Outputs
 ```
 See 07-authorizer-wrapper
 
+Add authorizer and attach to hello
+
+```text
+Stack Space-Finder-Backend (SpaceFinder)
+Resources
+[-] AWS::ApiGateway::Deployment SpaceApiDeploymentA2B9E765605b1d2e5c183140f847de2c2f7b20c9 destroy
+[+] AWS::ApiGateway::Deployment SpaceApi/Deployment SpaceApiDeploymentA2B9E765e5c8dbb757fdc2f782da39c6e85ecce3 
+[+] AWS::Cognito::UserPool SpaceUserPool SpaceUserPool6AB542DC 
+[+] AWS::Cognito::UserPoolClient SpaceUserPool/SpaceUserPool-client SpaceUserPoolSpaceUserPoolclient4839E5E8 
+[+] AWS::ApiGateway::Authorizer SpaceUserAuthorizer SpaceUserAuthorizer401AE1AA 
+[~] AWS::ApiGateway::Stage SpaceApi/DeploymentStage.prod SpaceApiDeploymentStageprodBB8A31FE 
+ └─ [~] DeploymentId
+     └─ [~] .Ref:
+         ├─ [-] SpaceApiDeploymentA2B9E765605b1d2e5c183140f847de2c2f7b20c9
+         └─ [+] SpaceApiDeploymentA2B9E765e5c8dbb757fdc2f782da39c6e85ecce3
+[~] AWS::ApiGateway::Method SpaceApi/Default/hello/GET SpaceApihelloGET65983C27 
+ ├─ [~] AuthorizationType
+ │   ├─ [-] NONE
+ │   └─ [+] COGNITO_USER_POOLS
+ └─ [+] AuthorizerId
+     └─ {"Ref":"SpaceUserAuthorizer401AE1AA"}
+[~] AWS::Lambda::Function SpacesTable-Create SpacesTableCreate125CEC52 
+ ├─ [~] Code
+ │   └─ [~] .S3Key:
+ │       ├─ [-] 5483b486abd178c5b05b4811514f57e0f773e69c6f9283ebb255177ca18de941.zip
+ │       └─ [+] 1319278491390ef2a7def384bab8f1750d6df39ec2661fc787565399235007be.zip
+ └─ [~] Metadata
+     └─ [~] .aws:asset:path:
+         ├─ [-] asset.5483b486abd178c5b05b4811514f57e0f773e69c6f9283ebb255177ca18de941
+         └─ [+] asset.1319278491390ef2a7def384bab8f1750d6df39ec2661fc787565399235007be
+[~] AWS::Lambda::Function SpacesTable-Update SpacesTableUpdate931099D2 
+ ├─ [~] Code
+ │   └─ [~] .S3Key:
+ │       ├─ [-] 47230dd928f67a8178e3b778c3b1afa7a522aa455c280df8e9f85ebbf49643f9.zip
+ │       └─ [+] 6efe027e63813ff0b8574c0d5f1eba019ae6c5b405cc8060d4578bf1b95e2021.zip
+ └─ [~] Metadata
+     └─ [~] .aws:asset:path:
+         ├─ [-] asset.47230dd928f67a8178e3b778c3b1afa7a522aa455c280df8e9f85ebbf49643f9
+         └─ [+] asset.6efe027e63813ff0b8574c0d5f1eba019ae6c5b405cc8060d4578bf1b95e2021
+
+Outputs
+[+] Output UserPoolId UserPoolId: {"Value":{"Ref":"SpaceUserPool6AB542DC"}}
+[+] Output UserPoolClientId UserPoolClientId: {"Value":{"Ref":"SpaceUserPoolSpaceUserPoolclient4839E5E8"}}
+```
+
+and deploy:
+
+07-authorizer-api
+
+Put the resulting IDs in the config:
+
+```text
+ ✅  Space-Finder-Backend (SpaceFinder)
+
+Outputs:
+Space-Finder-Backend.SpaceApiEndpointDA7E4050 = https://67183kcdkf.execute-api.eu-central-1.amazonaws.com/prod/
+Space-Finder-Backend.UserPoolClientId = 6hkmkdf2j11ft5potp0paoqo1p
+Space-Finder-Backend.UserPoolId = eu-central-1_RsHsBNMan
+
+Stack ARN:
+arn:aws:cloudformation:eu-central-1:469225108435:stack/SpaceFinder/5eea0820-5870-11ec-a226-061d7a8cfc38
+```
+
+Create test user and enable it via console
+`aws cognito-idp admin-set-user-password --user-pool-id eu-central-1_RsHsBNMan --username test_user --password 'Qwerty123!' --permanent`
+
+Get the new token from auth test, put to requests.http => works
+
+07-cdk-pool
 ---
 
 ## 14 - TS recap
