@@ -2702,7 +2702,7 @@ Outputs
 
 ```
 
-Error - had typo 
+Error - had typo
 
 ```diff
 diff --git a/cdk-back-end/infrastructure/auth/IdentityPoolWrapper.ts b/cdk-back-end/infrastructure/auth/IdentityPoolWrapper.ts
@@ -3051,10 +3051,9 @@ Serverless Authentication and Authorization - 53min
 Building Multi-Tenant Solutions on AWS (deconstructing SaaS) - 57:32min
 <https://www.youtube.com/watch?v=mwQ5lipGTBI>
 
-## 09-13 Chapters 
+## 09-13 Chapters
 
-See [this file](./AWS_and_Typescript_Masterclass_-_Frontend.md)
----
+See [this file](../cdk-front-end/AWS_and_Typescript_Masterclass_-_Frontend.md)
 
 ## 14 - TS recap
 
