@@ -231,6 +231,12 @@ Added some CSS
 
 See the Navbar how dynamically can add style to float to the right
 
+### State of the app
+
+App shows user on login but looses the state on reload => remember.
+
+Using history to navigate AFTER login => history.push()
+
 
 
 ## 10 Using AWS in React with Amplify

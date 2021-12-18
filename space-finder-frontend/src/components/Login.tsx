@@ -1,6 +1,7 @@
 import React, { SyntheticEvent } from "react";
 import { AuthService } from "../services/AuthService";
 import {User} from '../model/Model'
+import history from '../utils/history'
 
 interface LoginProps {
     authService: AuthService
@@ -46,6 +47,7 @@ export class Login extends React.Component<LoginProps,LoginState> {
         if (result) {
             this.setState({loginSuccessful: true});
             this.props.setUser(result)
+            history.push('/profile');
         } else {
             this.setState({loginSuccessful: false});
         }
