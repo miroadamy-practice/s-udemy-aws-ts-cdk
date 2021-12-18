@@ -229,6 +229,10 @@ See also: <https://stackoverflow.com/questions/56577201/why-is-isolatedmodules-e
 
 Added some CSS
 
+See the Navbar how dynamically can add style to float to the right
+
+
+
 ## 10 Using AWS in React with Amplify
 
 ## 11 Deployment
