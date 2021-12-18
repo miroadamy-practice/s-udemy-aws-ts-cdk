@@ -183,6 +183,52 @@ export class App extends React.Component<{}, AppState> {
 
 ```
 
+### Routing
+
+Create some components - Home, Profile and Navbar that will point to them.
+
+Need to install react-router-dom and types for it
+
+```bash
+➜  space-finder-frontend git:(master) ✗ npm i react-router-dom @types/react-router-dom and import Link
+
+added 6 packages, and audited 1414 packages in 7s
+
+163 packages are looking for funding
+  run `npm fund` for details
+
+6 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+```
+
+Dynamic part - `loginLogOut` - depending on state link to login or log out
+
+Had to downgrade React-router-dom to `"react-router-dom": "^5.2.0",` - with 6.x there is no `history` property
+
+Also, I got this error:
+
+```bash
+TS1208: 'history.ts' cannot be compiled under '--isolatedModules' because it is considered a global script file. Add an import, export, or an empty 'export {}' statement to make it a module.
+```
+
+To fix it, I added dummy code into the history.ts
+
+```typescript
+
+if (false) {
+    console.log('Why do I need to do this ?')
+}
+
+```
+
+See also: <https://stackoverflow.com/questions/56577201/why-is-isolatedmodules-error-fixed-by-any-import/56577324>
+
+Added some CSS
+
 ## 10 Using AWS in React with Amplify
 
 ## 11 Deployment
