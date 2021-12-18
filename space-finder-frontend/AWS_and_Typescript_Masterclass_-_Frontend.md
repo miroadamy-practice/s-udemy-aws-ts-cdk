@@ -237,7 +237,7 @@ App shows user on login but looses the state on reload => remember.
 
 Using history to navigate AFTER login => history.push()
 
-
+### Async data rendering
 
 ## 10 Using AWS in React with Amplify
 
