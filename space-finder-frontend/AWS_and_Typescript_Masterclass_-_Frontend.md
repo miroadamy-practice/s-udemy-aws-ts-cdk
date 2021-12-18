@@ -15,7 +15,7 @@ See [AWS & Typescript Masterclass - CDK, Serverless, React](https://www.udemy.co
 
 See `/Users/miroadamy/prj/s-udemy-aws-ts-cdk`
 
-## 09 Front-End with React 
+## 09 Front-End with React
 
 Generate the app (this installs React)
 
@@ -97,7 +97,7 @@ Cleanup after generated + new folders
 - state is internal, props come from outside
 - component can change its state, cannot change properties
 
-#### First class component:
+#### First class component
 
 - model - holds data types
 - dummy version of the AuthService - returns user based on hardcoded creds
@@ -107,9 +107,39 @@ Cleanup after generated + new folders
 
 #### Child Component
 
+- added Login component
+- simple form
+- see how it is called from App with passing parameter to child
+
+```react
+export class App extends React.Component<{}, AppState> {
+
+  private authService: AuthService = new AuthService();
+
+  render() {
+    return (
+      <div>
+        App from class works !!!
+        <Login authService={this.authService}/>
+      </div>
+    )
+  }
+}
+```
+
+### Event handling
+
+- onChange => private function, sets state
+- onSubmit - on form - async call to auth service
+
+Conditional rendering:
+
+- define label as variable
+- set it based on state
+- display
+
 ## 10 Using AWS in React with Amplify
 
 ## 11 Deployment
 
 ## 12 Advanced use cases
-
