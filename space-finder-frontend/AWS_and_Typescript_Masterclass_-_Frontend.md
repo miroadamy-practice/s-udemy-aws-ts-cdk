@@ -138,6 +138,51 @@ Conditional rendering:
 - set it based on state
 - display
 
+### Data from child to parent
+
+From parent - easy:
+
+```typescript
+<Login authService={this.authService}/>
+
+```
+
+Back: callback function
+
+- add new property to interface that is passed to child, child calls it
+- function sets the user
+
+Must register the method in constructor (?? Why)
+
+```typescript
+export class App extends React.Component<{}, AppState> {
+
+  private authService: AuthService = new AuthService();
+
+  constructor(props: any) {
+    super(props);
+
+    this.setUser = this.setUser.bind(this);
+
+  }
+
+  private setUser(user: User) {
+    this.setState({user: user});
+    console.log('Setting the user: ' + user);
+  }
+
+  render() {
+    return (
+      <div>
+        App from class works !!!
+        <Login authService={this.authService} setUser={this.setUser}/>
+      </div>
+    )
+  }
+}
+
+```
+
 ## 10 Using AWS in React with Amplify
 
 ## 11 Deployment
