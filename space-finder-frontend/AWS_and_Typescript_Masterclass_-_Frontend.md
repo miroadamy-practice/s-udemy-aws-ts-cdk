@@ -326,6 +326,14 @@ Same trick with binding async function as in Profile
 
 Load the data when `componentDidMount` fires
 
+### Modal
+
+After clicking on Reserve
+
+Titel, text, close
+
+CSS - z-index = 1 => over
+
 ## 10 Using AWS in React with Amplify
 
 ## 11 Deployment
