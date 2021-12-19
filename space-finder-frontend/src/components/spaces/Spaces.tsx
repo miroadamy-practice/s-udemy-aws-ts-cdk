@@ -38,7 +38,7 @@ export class Spaces extends Component<SpacesProps, SpacesState> {
 
         for (const space of this.state.spaces) {
             rows.push(
-                <SpaceComponent
+                <SpaceComponent key={space.spaceId}
                     location={space.location}
                     name={space.name}
                     spaceId={space.spaceId}
@@ -46,6 +46,8 @@ export class Spaces extends Component<SpacesProps, SpacesState> {
                 />
             )
         }
+
+        return rows;
     }
 
     render() {
