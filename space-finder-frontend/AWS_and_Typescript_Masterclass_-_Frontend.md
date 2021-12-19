@@ -374,6 +374,46 @@ Run `npm audit` for details.
 
 Move the AuthService + config from backend to frontend
 
+### Create bucket and CORS
+
+Task: unique name that does not change over runs: will use stack ID
+
+Using CFN functions in CDK
+
+```typescript
+ private initializeSuffix() {
+    const shortStackId = Fn.select(2, Fn.split('/',  this.stackId));
+    const Suffix = Fn.select(4,Fn.split('-', shortStackId));
+    this.suffix = Suffix
+  }
+
+  private initializeSpacesPhotosBucket(){
+    this.spacesPhotosBucket = new Bucket(this, 'spaces-photos', {
+      bucketName: 'spaces-photos' + this.suffix,
+      cors: [{
+        allowedMethods: [HttpMethods.GET, HttpMethods.HEAD, HttpMethods.PUT],
+        allowedOrigins: ['*'],
+        allowedHeaders: ['*']
+      }]
+    });
+    new CfnOutput(this, 'spaces-photos-bucket-name', {
+      value: this.spacesPhotosBucket.bucketName
+    })
+
+  }
+```
+
+```text
+Stack Space-Finder-Backend (SpaceFinder)
+Resources
+[+] AWS::S3::Bucket spaces-photos spacesphotos2389D37E 
+
+Outputs
+[+] Output spaces-photos-bucket-name spacesphotosbucketname: {"Value":{"Ref":"spacesphotos2389D37E"}}
+
+
+```
+
 ## 11 Deployment
 
 ## 12 Advanced use cases
