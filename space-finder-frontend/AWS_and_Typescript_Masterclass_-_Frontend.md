@@ -372,6 +372,8 @@ To address all issues (including breaking changes), run:
 Run `npm audit` for details.
 ```
 
+Move the AuthService + config from backend to frontend
+
 ## 11 Deployment
 
 ## 12 Advanced use cases
