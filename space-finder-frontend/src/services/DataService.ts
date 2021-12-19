@@ -21,8 +21,15 @@ export class DataService {
             name: 'Gatineau Park',
             spaceId: 'YOW-1'
         });
-
-
         return result;
+    }
+
+    public async reserveSpace(spaceId: string) : Promise<string | undefined>{
+        if (spaceId === 'BTS-1') {
+            return '555';
+        } else {
+            return undefined
+        }
+
     }
 }

@@ -299,12 +299,12 @@ export class Profile extends React.Component<ProfileProps, ProfileState> {
 
 ### Space component
 
-Has own folder. 
+Has own folder.
 
 No state, just properties
 
 This does not work for me
-`import genericImage from '../../assets/generic-image.jpg';` 
+`import genericImage from '../../assets/generic-image.jpg';`
 
 See <https://stackoverflow.com/questions/52759220/importing-images-in-typescript-react-cannot-find-module>
 
