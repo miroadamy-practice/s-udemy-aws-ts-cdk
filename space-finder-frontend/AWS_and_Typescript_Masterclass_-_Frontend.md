@@ -297,6 +297,35 @@ export class Profile extends React.Component<ProfileProps, ProfileState> {
 }
 ```
 
+### Space component
+
+Has own folder. 
+
+No state, just properties
+
+This does not work for me
+`import genericImage from '../../assets/generic-image.jpg';` 
+
+See <https://stackoverflow.com/questions/52759220/importing-images-in-typescript-react-cannot-find-module>
+
+This worked: `const genericImage = require('../../assets/generic-image.jpg');`
+
+However, after I added line to `index.tsx`
+
+```text
+/// <reference types="react-scripts" />
+```
+
+It worked.
+
+Dummy DataService for Spaces
+
+Spaces component = array of Spaces
+
+Same trick with binding async function as in Profile
+
+Load the data when `componentDidMount` fires
+
 ## 10 Using AWS in React with Amplify
 
 ## 11 Deployment
