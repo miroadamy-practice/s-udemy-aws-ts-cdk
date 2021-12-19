@@ -239,6 +239,64 @@ Using history to navigate AFTER login => history.push()
 
 ### Async data rendering
 
+Shows how to render the list of properties.
+
+Note how it builds a table:
+
+```typescript
+export class Profile extends React.Component<ProfileProps, ProfileState> {
+
+    state: ProfileState = {
+        userAttributes: []
+    }
+
+    async componentDidMount(){
+        if (this.props.user) {
+            const userAttrs = await this.props.authService.getUserAttributes(this.props.user);
+            this.setState({
+                userAttributes: userAttrs
+            })
+        }
+    }
+
+    private renderUserAttributes(user: User) {
+        const rows = [];
+        for (const userAttribute of this.state.userAttributes) {
+            rows.push(<tr key={userAttribute.Name}>
+                <td>{userAttribute.Name}</td>
+                <td>{userAttribute.Value}</td>
+            </tr>)
+        }
+        return <table>
+            <tbody>
+                {rows}
+            </tbody>
+        </table>
+    }
+    render(): React.ReactNode {
+        let profileSpace: any
+
+        if (this.props.user) {
+            profileSpace = <div>
+                <h3>Hello {this.props.user.userName}</h3>
+                Here are your attributes:
+                {this.renderUserAttributes(this.props.user)}
+                </div>
+        } else {
+            profileSpace = <div>
+                Please <Link to='/login'>Login</Link>
+            </div>
+        }
+        return (
+            <div>
+                Welcome to the profile page
+                {profileSpace}
+            </div>
+        )
+    }
+}
+```
+
 ## 10 Using AWS in React with Amplify
 
 ## 11 Deployment
