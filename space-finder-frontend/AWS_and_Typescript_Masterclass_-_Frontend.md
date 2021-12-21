@@ -558,7 +558,52 @@ We need to really authenticate to create space
 
 ### AWS Credentials in the browser
 
+Copy getTempCredentials and RefreshToken to auth service in FE
 
+Call the getTempCredentials in setUser
+
+Inspect `AWS.config.credentials`
+
+```json
+
+CognitoIdentityCredentials {expired: false, expireTime: Wed Dec 22 2021 00:09:37 GMT+0100 (Central European Standard Time), refreshCallbacks: Array(0), accessKeyId: 'ASIAW2P766PJ3QGL53N2', sessionToken: 'IQoJb3JpZ2luX2VjECYaDGV1LWNlbnRyYWwtMSJHMEUCIFf3bH…+ff29ckIfUloDwUI0o2UwnNV0I7DD3x9eXbWkmCRnSnni3KsG', …}
+accessKeyId: "ASIAW2P766PJ3QGL53N2"
+cognito: features.constructor {config: Config, isGlobalEndpoint: false, endpoint: Endpoint, _events: {…}, MONITOR_EVENTS_BUBBLE: ƒ, …}
+data: {IdentityId: 'eu-central-1:62f0afd2-05b7-43dd-a990-9fcc0d8b3433', Credentials: {…}}
+expireTime: Wed Dec 22 2021 00:09:37 GMT+0100 (Central European Standard Time) {}
+expired: false
+params: {IdentityPoolId: 'eu-central-1:51711005-da04-4a95-9154-96c73393713f', Logins: {…}, IdentityId: 'eu-central-1:62f0afd2-05b7-43dd-a990-9fcc0d8b3433', RoleSessionName: 'web-identity'}
+refreshCallbacks: []
+sessionToken: "IQoJb3JpZ2luX2VjECYaDGV1LWNlbnRyYWwtMSJHMEUCIFf3bHjiGafEr4RCLAXbXsDbQQllHCv4sqT1lgAbp+r7AiEA1ykvxMrMCoXwRHc4tKUz4Ztoqh/LzUmQBRZ3wkvxk5Uq1gQIHxADGgw0NjkyMjUxMDg0MzUiDO9DVem41s3W6Z1p1CqzBMfcPky7tGH1FsTptWqNmuzIfhsuNMlgeU/NE2iqER7UXNMGEoHfkb1qFJ61nPJrKHJ4V424ozwNEgIjcVAjgfzWrrK0IPz27kUfSLwGcKgRId21YyV3vpoKLqznNx9RXFlon+kIpSj5gn2KKoO9qf4q+Hr4Ywia2peKJs/xyWhGGUworIeS/BubQxSYzsqLXqSC7lkSgdVFS2ErfVkLmBT44GLLvNc0caQ6PqztNFyKYzMfRLE87twFVyCBisM0BwNIHWvlfpS4PXwE5WNan1YxO/A8R5uu+5P+yr5iH/OuQaRYKvx5tvByFnW0Jpc2JNvV1+1fNuiy1rVw58OOM53m9lWNilmFpnbCqXFbOIngQUaWBCKzjNm0++y4PByLzP+KU1aoqaQO3tyRuF4Fp1uTZiQZ+KHCqGchE9GwWBMpU6dCu+79Vx1AvdivBw3saac0hcwRk0aYRY0oD465Eh8JtpOU8iAEoBPnCt/7EKIWGjAtVde3WC34bxdzmg9zEZhL32Jf0W8OcSgLnQQeP6+WTyIo4sueKVmT65TSgeFLyK9yHd7xhEi8rXsMdiTQ4oMc2HmcI4/lDXzPpYdWuDtMdsTOuLqLXoOqmS5qh0hK9VqLkvnrxOf2No5rwfH3CiXjVas2hhzCldNyyslqUY54Lm32tAMmlWfqunJYgM+tlJo+2WxwUH6vRGISGPvSEbQK3Pvao+KUIJyPsHMQz3KDIZL1qzJz4Z0+i+ChtqTGYhAUMKGhiY4GOoUCO+JpJGNqUXlO0aeGr6Nt1EAb+ibYsFOvLycA0HYzjwHixMyKcCaWR6dhjqLkb5qaZSnoQOvNZUkY6jrAXsn6keCsJoZpg7D2QSOe320jyGlV8wdzCsCtXh/tskBLhxsKA9+Rr/tmxGgS+OcNkgG0ypy0PMzDB3gfp6JYMZjH7CKvGE1ML4hAmO1t8JP7G+3lWr3QeXBdgSjNVe7ndx7LDLfZn7pSPJ3tnXwy8+Dvc0YFxqz8QUdHan+bRKB18F4afLdSn9Gb9S4IuS54VC3J8IaGTmXTR1cUDO/ea60aEyi+ff29ckIfUloDwUI0o2UwnNV0I7DD3x9eXbWkmCRnSnni3KsG"
+sts: features.constructor {config: Config, isGlobalEndpoint: true, signingRegion: 'us-east-1', endpoint: Endpoint, _events: {…}, …}
+webIdentityCredentials: WebIdentityCredentials {expired: true, expireTime: null, refreshCallbacks: Array(0), accessKeyId: undefined, sessionToken: undefined, …}
+_clientConfig: {region: 'eu-central-1'}
+_identityId: "eu-central-1:62f0afd2-05b7-43dd-a990-9fcc0d8b3433"
+identityId: (...)
+secretAccessKey: "zdoWlCtiRtFbKu0J22Cu2/xXpAkjysC80JHb8VOo"
+get identityId: ƒ ()
+set identityId: ƒ (identityId)
+[[Prototype]]: Credentials
+cacheId: ƒ cacheId(data)
+clearCachedId: ƒ clearCache()
+clearIdOnNotAuthorized: ƒ clearIdOnNotAuthorized(err)
+constructor: ƒ CognitoIdentityCredentials(params, clientConfig)
+createClients: ƒ ()
+getCredentialsForIdentity: ƒ getCredentialsForIdentity(callback)
+getCredentialsFromSTS: ƒ getCredentialsFromSTS(callback)
+getId: ƒ getId(callback)
+getStorage: ƒ getStorage(key)
+load: ƒ load(callback)
+loadCachedId: ƒ loadCachedId()
+loadCredentials: ƒ loadCredentials(data, credentials)
+localStorageKey: {id: 'aws.cognito.identity-id.', providers: 'aws.cognito.identity-providers.'}
+refresh: ƒ refresh(callback)
+setStorage: ƒ setStorage(key, val)
+storage: Storage {CognitoIdentityServiceProvider.6hkmkdf2j11ft5potp0paoqo1p.LastAuthUser: 'test_user', CognitoIdentityServiceProvider.6hkmkdf2j11ft5potp0paoqo1p.test_user.refreshToken: 'eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiUl…7JB3sgiXffvPlEgyRU5e8jLJyA.4IzilknEEhaTrL-zYk8CAg', CognitoIdentityServiceProvider.6hkmkdf2j11ft5potp0paoqo1p.test_user.idToken: 'eyJraWQiOiI2NTMybGtVZjRpUFIxV3lqMVZUTHRQT2tIYUtZK0…77PG0fB1c3foHiU_B19ek1DKw6L34FREVgaViRmBbk86nmiqA', amplify-signin-with-hostedUI: 'false', CognitoIdentityServiceProvider.6hkmkdf2j11ft5potp0paoqo1p.test_user.userData: '{"UserAttributes":[{"Name":"sub","Value":"f92e7bff…:"miro.adamy@gmail.com"}],"Username":"test_user"}', …}
+[[Prototype]]: Object
+```
+
+Ready to make calls
 
 ## 11 Deployment
 

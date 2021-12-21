@@ -24,11 +24,14 @@ export class AuthService {
       public async login(username: string, password: string ): Promise<User | undefined> {
         try {
             const user = await Auth.signIn(username, password) as CognitoUser;
+            console.log('Logged on as:' + user);
             return {
                       cognitoUser:  user,
                       userName: user.getUsername()
             }
+        
         } catch (error) {
+            console.log('Got error:' + error);
             return undefined
         }
         
@@ -41,4 +44,32 @@ export class AuthService {
 
         return result;
     }
+
+
+    public async getAWSTemporaryCreds(user: CognitoUser){
+        const cognitoIdentityPool = `cognito-idp.${config.REGION}.amazonaws.com/${config.USER_POOL_ID}`;
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+            IdentityPoolId: config.IDENTITY_POOL_ID,
+            Logins: {
+                [cognitoIdentityPool]: user.getSignInUserSession()!.getIdToken().getJwtToken()
+            }
+        },{
+            region: config.REGION
+        });
+        await this.refreshCredentials();
+    }
+
+    // refresh creds
+    private async refreshCredentials() : Promise<void> {
+        return new Promise((resolve, reject) => {
+            (AWS.config.credentials as Credentials).refresh(err => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            })
+        })
+    }
+
 }
