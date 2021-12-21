@@ -9,15 +9,17 @@ export class AuthorizerWrapper {
 
     private scope: Construct;
     private api: RestApi;
+    private photoBucketArn: string;
 
     private userPool: UserPool;
     private userPoolClient: UserPoolClient;
     public authorizer: CognitoUserPoolsAuthorizer;
     private identityPoolWrapper: IdentityPoolWrapper;
 
-    constructor(scope: Construct, api: RestApi) {
+    constructor(scope: Construct, api: RestApi, bucketArn: string) {
         this.scope = scope;
         this.api = api;
+        this.photoBucketArn = bucketArn;
         this.initialize();
     }
 
@@ -81,6 +83,11 @@ export class AuthorizerWrapper {
     }
 
     private initializeIdentityPoolWrapper(){
-        this.identityPoolWrapper = new IdentityPoolWrapper(this.scope, this.userPool, this.userPoolClient);
+        this.identityPoolWrapper = new IdentityPoolWrapper(
+            this.scope, 
+            this.userPool, 
+            this.userPoolClient,
+            this.photoBucketArn
+        );
     }
 }

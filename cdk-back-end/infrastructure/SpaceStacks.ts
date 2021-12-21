@@ -35,16 +35,14 @@ export class SpaceStack extends Stack {
   constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props);
 
-    this.authorizer = new AuthorizerWrapper(this, this.api);
-
-    const helloLambdaNodeJs = new NodejsFunction(this, 'helloLambdaNodeJS', {
-      entry: (join(__dirname, '..', 'services', 'node-lambda', 'hello.ts')),
-      handler: 'handler'
-    });
-    const s3ListPolicy = new PolicyStatement();
-    s3ListPolicy.addActions('s3:ListAllMyBuckets');
-    s3ListPolicy.addResources('*');
-    helloLambdaNodeJs.addToRolePolicy(s3ListPolicy);
+    // must create bucket before it is used in AuthorizerWrapper
+    this.initializeSuffix();
+    this.initializeSpacesPhotosBucket();
+    
+    this.authorizer = new AuthorizerWrapper(
+      this, 
+      this.api,
+      this.spacesPhotosBucket.bucketArn + '/*' );
 
     const optionsWithAuthorizer : MethodOptions = {
       authorizationType: AuthorizationType.COGNITO,
@@ -53,18 +51,13 @@ export class SpaceStack extends Stack {
       }
     }
 
-    const helloLambdaIntegration = new LambdaIntegration(helloLambdaNodeJs);
-    const helloLambdaResource = this.api.root.addResource('hello');
-    helloLambdaResource.addMethod('GET', helloLambdaIntegration, optionsWithAuthorizer);
-
    const spaceResource = this.api.root.addResource('spaces');
    spaceResource.addMethod('POST', this.spacesTable.createLambdaIntegration);
    spaceResource.addMethod('GET', this.spacesTable.readLambdaIntegration);
    spaceResource.addMethod('PUT', this.spacesTable.updateLambdaIntegration);
    spaceResource.addMethod('DELETE', this.spacesTable.deleteLambdaIntegration);
 
-   this.initializeSuffix();
-   this.initializeSpacesPhotosBucket();
+   
   }
 
   private initializeSuffix() {
