@@ -1,5 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context} from 'aws-lambda';
+import { addCorsHeader } from '../shared/Utils';
 
 
 const TABLE_NAME = process.env.TABLE_NAME!;
@@ -13,7 +14,7 @@ async function handler (event: APIGatewayProxyEvent, context: Context): Promise<
         statusCode: 200,
         body: `Deleted `
     }
-
+    addCorsHeader(result);
     const spaceId = event.queryStringParameters?.[PRIMARY_KEY]
 
     try {

@@ -411,6 +411,138 @@ Resources
 Outputs
 [+] Output spaces-photos-bucket-name spacesphotosbucketname: {"Value":{"Ref":"spacesphotos2389D37E"}}
 
+```
+
+Now we need to add the bucket to Admin role => dependency injection
+
+- pass it to AuthorizerWrapper constructor
+- change order of creation
+- need to pass it to IdentityPool
+- IdentityPool uses it in Policy for Admin
+
+```text
+Stack Space-Finder-Backend (SpaceFinder)
+IAM Statement Changes
+┌───┬──────────────────────────────┬────────┬──────────────────────────────┬──────────────────────────────┬───────────────────────────────┐
+│   │ Resource                     │ Effect │ Action                       │ Principal                    │ Condition                     │
+├───┼──────────────────────────────┼────────┼──────────────────────────────┼──────────────────────────────┼───────────────────────────────┤
+│ - │ ${helloLambdaNodeJSAEFC0103. │ Allow  │ lambda:InvokeFunction        │ Service:apigateway.amazonaws │ "ArnLike": {                  │
+│   │ Arn}                         │        │                              │ .com                         │   "AWS:SourceArn": "arn:${AWS │
+│   │                              │        │                              │                              │ ::Partition}:execute-api:eu-c │
+│   │                              │        │                              │                              │ entral-1:469225108435:${Space │
+│   │                              │        │                              │                              │ Api1B373D2B}/${SpaceApi/Deplo │
+│   │                              │        │                              │                              │ ymentStage.prod}/GET/hello"   │
+│   │                              │        │                              │                              │ }                             │
+│ - │ ${helloLambdaNodeJSAEFC0103. │ Allow  │ lambda:InvokeFunction        │ Service:apigateway.amazonaws │ "ArnLike": {                  │
+│   │ Arn}                         │        │                              │ .com                         │   "AWS:SourceArn": "arn:${AWS │
+│   │                              │        │                              │                              │ ::Partition}:execute-api:eu-c │
+│   │                              │        │                              │                              │ entral-1:469225108435:${Space │
+│   │                              │        │                              │                              │ Api1B373D2B}/test-invoke-stag │
+│   │                              │        │                              │                              │ e/GET/hello"                  │
+│   │                              │        │                              │                              │ }                             │
+├───┼──────────────────────────────┼────────┼──────────────────────────────┼──────────────────────────────┼───────────────────────────────┤
+│ - │ *                            │ Allow  │ s3:List*                     │ AWS:${CognitoAdminRole}      │                               │
+│ - │ *                            │ Allow  │ s3:ListAllMyBuckets          │ AWS:${helloLambdaNodeJSServi │                               │
+│   │                              │        │                              │ ceRole9951D888}              │                               │
+├───┼──────────────────────────────┼────────┼──────────────────────────────┼──────────────────────────────┼───────────────────────────────┤
+│ + │ ${spaces-photos.Arn}/*       │ Allow  │ s3:Get*                      │ AWS:${CognitoAdminRole}      │                               │
+│   │                              │        │ s3:List*                     │                              │                               │
+│   │                              │        │ s3:PutObject                 │                              │                               │
+│   │                              │        │ s3:PutObjectAcl              │                              │                               │
+└───┴──────────────────────────────┴────────┴──────────────────────────────┴──────────────────────────────┴───────────────────────────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+Resources
+[-] AWS::ApiGateway::Deployment SpaceApiDeploymentA2B9E765e5c8dbb757fdc2f782da39c6e85ecce3 destroy
+[-] AWS::ApiGateway::Resource SpaceApihelloDF776653 destroy
+[-] AWS::Lambda::Permission SpaceApihelloGETApiPermissionSpaceFinderBackendSpaceApiE9BB53FFGEThelloC5CE7BCC destroy
+[-] AWS::Lambda::Permission SpaceApihelloGETApiPermissionTestSpaceFinderBackendSpaceApiE9BB53FFGEThelloD20E1DAA destroy
+[-] AWS::ApiGateway::Method SpaceApihelloGET65983C27 destroy
+[-] AWS::IAM::Role helloLambdaNodeJSServiceRole9951D888 destroy
+[-] AWS::IAM::Policy helloLambdaNodeJSServiceRoleDefaultPolicy8628AD89 destroy
+[-] AWS::Lambda::Function helloLambdaNodeJSAEFC0103 destroy
+[+] AWS::ApiGateway::Deployment SpaceApi/Deployment SpaceApiDeploymentA2B9E76537f11508d9f69152180ac4a22081819a 
+[~] AWS::ApiGateway::Stage SpaceApi/DeploymentStage.prod SpaceApiDeploymentStageprodBB8A31FE 
+ └─ [~] DeploymentId
+     └─ [~] .Ref:
+         ├─ [-] SpaceApiDeploymentA2B9E765e5c8dbb757fdc2f782da39c6e85ecce3
+         └─ [+] SpaceApiDeploymentA2B9E76537f11508d9f69152180ac4a22081819a
+[~] AWS::IAM::Policy CognitoAdminRole/DefaultPolicy CognitoAdminRoleDefaultPolicyBC6192E4 
+ └─ [~] PolicyDocument
+     └─ [~] .Statement:
+         └─ @@ -1,7 +1,25 @@
+            [ ] [
+            [ ]   {
+            [-]     "Action": "s3:List*",
+            [+]     "Action": [
+            [+]       "s3:List*",
+            [+]       "s3:PutObject",
+            [+]       "s3:PutObjectAcl",
+            [+]       "s3:Get*"
+            [+]     ],
+            [ ]     "Effect": "Allow",
+            [-]     "Resource": "*"
+            [+]     "Resource": {
+            [+]       "Fn::Join": [
+            [+]         "",
+            [+]         [
+            [+]           {
+            [+]             "Fn::GetAtt": [
+            [+]               "spacesphotos2389D37E",
+            [+]               "Arn"
+            [+]             ]
+            [+]           },
+            [+]           "/*"
+            [+]         ]
+            [+]       ]
+            [+]     }
+            [ ]   }
+            [ ] ]
+
+****************************************************
+*** Newer version of CDK is available [2.2.0]    ***
+*** Upgrade recommended (npm install -g aws-cdk) ***
+****************************************************
+```
+
+### Adding CORS to Lambdas
+
+In utils
+
+```typescript
+export function addCorsHeader(result: APIGatewayProxyResult) {
+    result.headers = {
+        'Content-type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': '*'
+    }
+}
+---
+// Use it: in Create etc
+//...
+   const result: APIGatewayProxyResult = {
+        statusCode: 200,
+        body: 'Hello from DynamoDB'
+    }
+    addCorsHeader(result);
+// ...
+
+```
+
+Deploy
+
+```text
+ ✅  Space-Finder-Backend (SpaceFinder)
+
+Outputs:
+Space-Finder-Backend.IdentityPoolId = eu-central-1:51711005-da04-4a95-9154-96c73393713f
+Space-Finder-Backend.SpaceApiEndpointDA7E4050 = https://67183kcdkf.execute-api.eu-central-1.amazonaws.com/prod/
+Space-Finder-Backend.UserPoolClientId = 6hkmkdf2j11ft5potp0paoqo1p
+Space-Finder-Backend.UserPoolId = eu-central-1_RsHsBNMan
+Space-Finder-Backend.spacesphotosbucketname = spaces-photos061d7a8cfc38
+
+Stack ARN:
+arn:aws:cloudformation:eu-central-1:469225108435:stack/SpaceFinder/5eea0820-5870-11ec-a226-061d7a8cfc38
 
 ```
 

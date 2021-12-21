@@ -1,6 +1,6 @@
 import { DynamoDB } from 'aws-sdk';
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context} from 'aws-lambda';
-import {generateRandomId, getEventBody} from '../shared/Utils'
+import {generateRandomId, getEventBody, addCorsHeader} from '../shared/Utils'
 
 import {validateAsSpaceEntry, MissingFieldError} from '../shared/InputValidator'
 
@@ -13,7 +13,7 @@ async function handler (event: APIGatewayProxyEvent, context: Context): Promise<
         statusCode: 200,
         body: 'Hello from DynamoDB'
     }
-
+    addCorsHeader(result);
     try {
         const item = getEventBody(event);
         item.spaceId = generateRandomId();
@@ -23,7 +23,9 @@ async function handler (event: APIGatewayProxyEvent, context: Context): Promise<
             Item: item
         }
         ).promise();
-        result.body = JSON.stringify(`Created item: ${item.spaceId}`);
+        result.body = JSON.stringify({
+            id: item.spaceId
+        });
     } catch (error: any) {
         result.statusCode = 400;
         result.body = JSON.stringify({error: error.message});
