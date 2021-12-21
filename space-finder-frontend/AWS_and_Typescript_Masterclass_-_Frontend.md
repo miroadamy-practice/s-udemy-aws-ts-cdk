@@ -546,6 +546,20 @@ arn:aws:cloudformation:eu-central-1:469225108435:stack/SpaceFinder/5eea0820-5870
 
 ```
 
+### Back to Front End
+
+Add CreateSpace component - CreateSpace
+
+Add dummy dataservice method
+
+Add it to Apps.tsx
+
+We need to really authenticate to create space 
+
+### AWS Credentials in the browser
+
+
+
 ## 11 Deployment
 
 ## 12 Advanced use cases
