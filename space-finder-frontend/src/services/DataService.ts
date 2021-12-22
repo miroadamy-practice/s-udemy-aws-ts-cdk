@@ -2,6 +2,7 @@ import { Space } from "../model/Model";
 import { ICreateSpaceState } from "../components/spaces/CreateSpace";
 import {S3, config} from 'aws-sdk';
 import { config as appConfig}  from './config';
+import { resourceLimits } from "worker_threads";
 
 
 config.update({
@@ -45,9 +46,17 @@ export class DataService {
     public async createSpace(iCreateSpace: ICreateSpaceState) {
         if (iCreateSpace.photo) {
             const photoUrl = await this.uploadPublicFile(iCreateSpace.photo, appConfig.SPACES_PHOTOS_BUCKET);
-            console.log(photoUrl);
+            iCreateSpace.photoURL = photoUrl;
+            iCreateSpace.photo = undefined; // do NOT send it stringified back
         }
-        return 123;
+        const requestUrl = appConfig.api.spacesUrl;
+        const requestOptions: RequestInit = {
+            method: 'POST',
+            body: JSON.stringify(iCreateSpace)
+        }
+        const result = await fetch(requestUrl, requestOptions);
+        const resultJSON = await result.json();
+        return JSON.stringify(resultJSON.id);
     }
 
     private async uploadPublicFile(file: File, bucket: string) {

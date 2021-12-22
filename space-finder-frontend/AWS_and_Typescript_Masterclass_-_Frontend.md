@@ -624,6 +624,14 @@ Bug in AWS
 Workaround 1 - create client when called
 
 This works - uploads file, makes it public (does not add Space, not yet implemented)
+
+---
+
+Use request url, issue POST to '/spaces' with iCreateSpaces content => stores in DynamoDB
+
+Does not display (yet)
+
+
 ## 11 Deployment
 
 ## 12 Advanced use cases
