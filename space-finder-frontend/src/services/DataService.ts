@@ -14,25 +14,14 @@ export class DataService {
     private s3Client = new S3({region: appConfig.REGION});
 
     public async getSpaces(): Promise<Space[]> {
-        const result: Space[] = [];
+        const requestUrl = appConfig.api.spacesUrl;
 
-        result.push({
-            location: 'Valencia',
-            name: 'Turia',
-            spaceId: 'VLC-1'
+        const requestResult = await fetch(requestUrl, {
+            method: 'GET'
         });
 
-        result.push({
-            location: 'Bratislava',
-            name: 'Hradny Kopec',
-            spaceId: 'BTS-1'
-        });
-        result.push({
-            location: 'Ottawa',
-            name: 'Gatineau Park',
-            spaceId: 'YOW-1'
-        });
-        return result;
+        const responseJSON = await requestResult.json();
+        return responseJSON;
     }
 
     public async reserveSpace(spaceId: string) : Promise<string | undefined>{
