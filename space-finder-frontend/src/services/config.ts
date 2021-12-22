@@ -4,5 +4,6 @@ export const config = {
     APP_CLIENT_ID: '6hkmkdf2j11ft5potp0paoqo1p',
     IDENTITY_POOL_ID: 'eu-central-1:51711005-da04-4a95-9154-96c73393713f',
     TEST_USER_NAME: 'test_user',
-    TEST_USER_PASSWORD: 'Qwerty123!'
+    TEST_USER_PASSWORD: 'Qwerty123!',
+    SPACES_PHOTOS_BUCKET: 'spaces-photos061d7a8cfc38'
 }

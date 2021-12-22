@@ -605,6 +605,23 @@ storage: Storage {CognitoIdentityServiceProvider.6hkmkdf2j11ft5potp0paoqo1p.Last
 
 Ready to make calls
 
+### Uploading files
+
+in DataService
+
+For now, get the name from AWS and add to config
+
+Added uploadPublicFile, test if work =>
+
+```text
+Error while creating space:  Missing credentials in config, if using AWS_CONFIG_FILE, set AWS_SDK_LOAD_CONFIG=1
+```
+
+Are creds are RIGHT THERE.
+
+Bug in AWS
+
+
 ## 11 Deployment
 
 ## 12 Advanced use cases
