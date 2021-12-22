@@ -631,6 +631,15 @@ Use request url, issue POST to '/spaces' with iCreateSpaces content => stores in
 
 Does not display (yet)
 
+### Showing data from table
+
+Small fixes:
+
+- space component: photoUrl vs photoURL
+- delete entries from table
+- anonymity for files - add random string
+
+
 
 ## 11 Deployment
 

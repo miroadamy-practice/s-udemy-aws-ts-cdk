@@ -3,6 +3,7 @@ import { ICreateSpaceState } from "../components/spaces/CreateSpace";
 import {S3, config} from 'aws-sdk';
 import { config as appConfig}  from './config';
 import { resourceLimits } from "worker_threads";
+import {generateRandomId} from '../utils/Utils'
 
 
 config.update({
@@ -60,7 +61,7 @@ export class DataService {
     }
 
     private async uploadPublicFile(file: File, bucket: string) {
-        const fileName = file.name;
+        const fileName = generateRandomId() + file.name;
         const uploadResult = await new S3().upload({
             Bucket: bucket,
             Key: fileName,
