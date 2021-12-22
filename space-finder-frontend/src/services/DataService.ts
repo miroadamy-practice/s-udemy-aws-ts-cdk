@@ -52,7 +52,7 @@ export class DataService {
 
     private async uploadPublicFile(file: File, bucket: string) {
         const fileName = file.name;
-        const uploadResult = await this.s3Client.upload({
+        const uploadResult = await new S3().upload({
             Bucket: bucket,
             Key: fileName,
             Body: file,

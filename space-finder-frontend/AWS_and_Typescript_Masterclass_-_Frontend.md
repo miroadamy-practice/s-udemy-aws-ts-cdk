@@ -621,7 +621,9 @@ Are creds are RIGHT THERE.
 
 Bug in AWS
 
+Workaround 1 - create client when called
 
+This works - uploads file, makes it public (does not add Space, not yet implemented)
 ## 11 Deployment
 
 ## 12 Advanced use cases
