@@ -720,6 +720,31 @@ Issues:
 
 => Cloudfront
 
+```text
+✅  Space-Finder-Backend (SpaceFinder)
+
+Outputs:
+Space-Finder-Backend.IdentityPoolId = eu-central-1:51711005-da04-4a95-9154-96c73393713f
+Space-Finder-Backend.SpaceApiEndpointDA7E4050 = https://67183kcdkf.execute-api.eu-central-1.amazonaws.com/prod/
+Space-Finder-Backend.UserPoolClientId = 6hkmkdf2j11ft5potp0paoqo1p
+Space-Finder-Backend.UserPoolId = eu-central-1_RsHsBNMan
+Space-Finder-Backend.spaceFinderCloudfront3Url = d1e25ltf458g5k.cloudfront.net
+Space-Finder-Backend.spaceFinderWebS3Url = http://space-app-web061d7a8cfc38.s3-website.eu-central-1.amazonaws.com
+Space-Finder-Backend.spacesphotosbucketname = spaces-photos061d7a8cfc38
+
+Stack ARN:
+arn:aws:cloudformation:eu-central-1:469225108435:stack/SpaceFinder/5eea0820-5870-11ec-a226-061d7a8cfc38
+```
+
+- see the S3 client singleton function getS3Client()
+
+
+Finished code in forked repos - see:
+
+- <https://github.com/miroadamy/space-finder-backend>
+- <https://github.com/miroadamy/space-finder-frontend>
+
+null => avoid null check - variableName!
 
 
 ## 12 Advanced use cases

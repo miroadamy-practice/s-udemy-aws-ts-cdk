@@ -3064,3 +3064,29 @@ Run ts:
 - tsc ⇒ JS, then Node or browser
 - directly - ts-node
 - bundle with Webpack, parcel ⇒ browser
+
+The config:
+
+```json
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "lib": [
+      "DOM",
+      "ES6"
+    ],
+    "target": "es6",
+    "rootDir": "src",
+    "outDir": "dist",
+    "baseUrl": "src",
+    "paths": {
+      "@components/*":["data/components/*"]
+    },
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "strict": true
+  }
+}
+```

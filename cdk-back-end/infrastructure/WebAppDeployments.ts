@@ -42,5 +42,27 @@ export class WebAppDeployment {
             value: this.deploymentBucket.bucketWebsiteUrl
         });
 
+        const cloudFront = new CloudFrontWebDistribution(
+            this.stack,
+            'space-app-web-distribution',
+            {
+                originConfigs: [
+                    {
+                        behaviors: [
+                            {
+                                isDefaultBehavior:  true
+                            }
+                        ],
+                        s3OriginSource: {
+                            s3BucketSource: this.deploymentBucket
+                        }
+                    }
+                ]
+            }
+        )
+        new CfnOutput(this.stack,'spaceFinderCloudfront3Url', {
+            value: cloudFront.distributionDomainName
+        });
+    }
 
 }
