@@ -8,6 +8,7 @@ import { NodejsFunction} from 'aws-cdk-lib/aws-lambda-nodejs'
 import {PolicyStatement} from 'aws-cdk-lib/aws-iam';
 import {AuthorizerWrapper} from './auth/AuthorizerWrapper'
 import { Bucket, HttpMethods } from "aws-cdk-lib/aws-s3";
+import { WebAppDeployment } from "./WebAppDeployments";
 
 export class SpaceStack extends Stack {
 
@@ -51,6 +52,7 @@ export class SpaceStack extends Stack {
       }
     }
 
+    new WebAppDeployment(this, this.suffix);
    const spaceResource = this.api.root.addResource('spaces');
    spaceResource.addMethod('POST', this.spacesTable.createLambdaIntegration);
    spaceResource.addMethod('GET', this.spacesTable.readLambdaIntegration);

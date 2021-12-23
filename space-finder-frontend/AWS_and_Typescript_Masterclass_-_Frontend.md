@@ -643,4 +643,83 @@ Small fixes:
 
 ## 11 Deployment
 
+Need to deploy the app to Cloudfront
+
+`npm run build`
+
+Take folder from build and move it to S3 bucket
+
+Add new class in the backend that deploys: WebAppDeployment
+
+```text
+Stack Space-Finder-Backend (SpaceFinder)
+IAM Statement Changes
+┌───┬────────────────────────────────────┬────────┬────────────────────────────────────┬──────────────────────────────────────┬───────────┐
+│   │ Resource                           │ Effect │ Action                             │ Principal                            │ Condition │
+├───┼────────────────────────────────────┼────────┼────────────────────────────────────┼──────────────────────────────────────┼───────────┤
+│ + │ ${Custom::CDKBucketDeployment8693B │ Allow  │ sts:AssumeRole                     │ Service:lambda.amazonaws.com         │           │
+│   │ B64968944B69AAFB0CC9EB8756C/Servic │        │                                    │                                      │           │
+│   │ eRole.Arn}                         │        │                                    │                                      │           │
+├───┼────────────────────────────────────┼────────┼────────────────────────────────────┼──────────────────────────────────────┼───────────┤
+│ + │ ${space-app-web-id.Arn}            │ Allow  │ s3:Abort*                          │ AWS:${Custom::CDKBucketDeployment869 │           │
+│   │ ${space-app-web-id.Arn}/*          │        │ s3:DeleteObject*                   │ 3BB64968944B69AAFB0CC9EB8756C/Servic │           │
+│   │                                    │        │ s3:GetBucket*                      │ eRole}                               │           │
+│   │                                    │        │ s3:GetObject*                      │                                      │           │
+│   │                                    │        │ s3:List*                           │                                      │           │
+│   │                                    │        │ s3:PutObject                       │                                      │           │
+├───┼────────────────────────────────────┼────────┼────────────────────────────────────┼──────────────────────────────────────┼───────────┤
+│ + │ ${space-app-web-id.Arn}/*          │ Allow  │ s3:GetObject                       │ AWS:*                                │           │
+├───┼────────────────────────────────────┼────────┼────────────────────────────────────┼──────────────────────────────────────┼───────────┤
+│ + │ arn:${AWS::Partition}:s3:::cdk-hnb │ Allow  │ s3:GetBucket*                      │ AWS:${Custom::CDKBucketDeployment869 │           │
+│   │ 659fds-assets-469225108435-eu-cent │        │ s3:GetObject*                      │ 3BB64968944B69AAFB0CC9EB8756C/Servic │           │
+│   │ ral-1                              │        │ s3:List*                           │ eRole}                               │           │
+│   │ arn:${AWS::Partition}:s3:::cdk-hnb │        │                                    │                                      │           │
+│   │ 659fds-assets-469225108435-eu-cent │        │                                    │                                      │           │
+│   │ ral-1/*                            │        │                                    │                                      │           │
+└───┴────────────────────────────────────┴────────┴────────────────────────────────────┴──────────────────────────────────────┴───────────┘
+IAM Policy Changes
+┌───┬──────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────────────────────────┐
+│   │ Resource                                                         │ Managed Policy ARN                                               │
+├───┼──────────────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────────────────┤
+│ + │ ${Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Se │ arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasi │
+│   │ rviceRole}                                                       │ cExecutionRole                                                   │
+└───┴──────────────────────────────────────────────────────────────────┴──────────────────────────────────────────────────────────────────┘
+(NOTE: There may be security-related changes not in this list. See https://github.com/aws/aws-cdk/issues/1299)
+
+Resources
+[+] AWS::S3::Bucket space-app-web-id spaceappwebidBC88228C 
+[+] AWS::S3::BucketPolicy space-app-web-id/Policy spaceappwebidPolicyC98213F9 
+[+] AWS::Lambda::LayerVersion space-app-web-deployment/AwsCliLayer spaceappwebdeploymentAwsCliLayer98282FF9 
+[+] Custom::CDKBucketDeployment space-app-web-deployment/CustomResource spaceappwebdeploymentCustomResource9B7FB553 
+[+] AWS::IAM::Role Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265 
+[+] AWS::IAM::Policy Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF 
+[+] AWS::Lambda::Function Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536 
+
+Outputs
+[+] Output spaceFinderWebS3Url spaceFinderWebS3Url: {"Value":{"Fn::GetAtt":["spaceappwebidBC88228C","WebsiteURL"]}}
+
+---
+ ✅  Space-Finder-Backend (SpaceFinder)
+
+Outputs:
+Space-Finder-Backend.IdentityPoolId = eu-central-1:51711005-da04-4a95-9154-96c73393713f
+Space-Finder-Backend.SpaceApiEndpointDA7E4050 = https://67183kcdkf.execute-api.eu-central-1.amazonaws.com/prod/
+Space-Finder-Backend.UserPoolClientId = 6hkmkdf2j11ft5potp0paoqo1p
+Space-Finder-Backend.UserPoolId = eu-central-1_RsHsBNMan
+Space-Finder-Backend.spaceFinderWebS3Url = http://space-app-web061d7a8cfc38.s3-website.eu-central-1.amazonaws.com
+Space-Finder-Backend.spacesphotosbucketname = spaces-photos061d7a8cfc38
+
+Stack ARN:
+arn:aws:cloudformation:eu-central-1:469225108435:stack/SpaceFinder/5eea0820-5870-11ec-a226-061d7a8cfc38
+```
+
+Issues:
+
+- ugly URL
+- http only
+
+=> Cloudfront
+
+
+
 ## 12 Advanced use cases
