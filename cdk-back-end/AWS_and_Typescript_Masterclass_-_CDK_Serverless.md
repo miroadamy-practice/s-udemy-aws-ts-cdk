@@ -3090,3 +3090,280 @@ The config:
   }
 }
 ```
+
+undefined vs null: undefined - something that may be defined in the future.
+
+It makes no sense:
+
+```typescript
+const abc = undefined; // makes no sense
+const def = null; // OK
+---
+let abc = undefined; // OK
+```
+
+Prefered way:
+
+```typescript
+function getData(): string | undefined  {
+  return '';
+}
+
+const data = getData();
+
+if (data) {  
+  // here we know data is string
+}
+
+```
+
+unknown type:
+
+```typescript
+let input: unknown;     // I do not know what it will be
+input = 'someValue';
+
+let someVal : string;
+
+// NOT ok
+someVal = input;
+
+if (typeof input === 'string') {
+  someVal = input;    // OK
+}
+
+```
+
+NEVER type
+
+```typescript
+
+function doTasks(tasks: number) : void | never {
+  if (tasks > 3) {
+    throw new Error('Too many tasks!');
+  }
+}
+```
+
+### Enums
+
+```typescript
+
+enum AuthError {
+  WRONG_CREDENTIALS,
+  SERVER_FAIL,
+  EXPIRED_SESSION
+}
+
+// generates Number values
+// unlike interfaces, they compile to something
+
+console.log(AuthError.WRONG_CREDENTIALS); // number
+console.log(AuthError[AuthError.WRONG_CREDENTIALS]); // string
+
+// we can assign string value - none or all
+
+enum AuthError2 {
+  WRONG_CREDENTIALS = ' wrong credentials',
+  SERVER_FAIL = 'server error',
+  EXPIRED_SESSION = 'log on again'
+}
+
+// great use in switch
+
+enum AuthError {
+    WRONG_CREDENTIALS,
+    SERVER_FAIL,
+    EXPIRED_SESSION,
+    UNEXPECTED_ERROR
+}
+
+console.log(AuthError[AuthError.WRONG_CREDENTIALS])
+
+enum AuthError2 {
+    WRONG_CREDENTIALS = 'wrong credentils',
+    SERVER_FAIL = ' server fail',
+    EXPIRED_SESSION = 'expired seession'
+}
+
+function handleError(error: AuthError) {
+    switch (error) {
+        case AuthError.EXPIRED_SESSION:
+            console.log('Get a new session!')
+            break;
+        case AuthError.SERVER_FAIL:
+            console.log('Restart the server!')
+            break;
+        case AuthError.WRONG_CREDENTIALS:
+        case AuthError.UNEXPECTED_ERROR:
+            console.log('Check your input!')
+            break;
+        default:
+            break;
+    }
+}
+
+handleError(AuthError.SERVER_FAIL);
+```
+
+### TS with Node
+
+To use http module, we need to install '@types/node'
+
+- add rootDir, outDit
+- tsc => generates JS files
+
+Run: `node dist/Launcher.js`
+
+=> starts server
+
+See repo <https://github.com/miroadamy/ts-backend-practice>
+
+Can add `npm i -D ts-node` and then run `npm start` (see start script in package.json)
+
+For debugging to work, I had to use explicit version of Node and tsconfig like this
+
+```json
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug server",
+            "runtimeExecutable": "node",
+            "runtimeVersion": "16.13.1",
+            "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+            "args": [
+                "${workspaceFolder}/src/Launcher.ts"
+            ]
+        }
+    ]
+}
+
+---
+{
+
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "target": "es6",
+        "module": "commonjs",
+        "rootDir": "src",
+        "outDir": "dist", 
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "strictNullChecks": true,
+        "strictPropertyInitialization": true,
+        "strict": true
+    },
+}
+
+```
+
+#### What also works
+
+Minimalistic example from VS Code docs
+
+```typescript
+let message: string = 'Hello World';
+console.log(message);
+```
+
+tsconfig:
+
+```json
+{
+    "compilerOptions": {
+      "target": "es5",
+      "module": "commonjs",
+      "outDir": "out",
+      "sourceMap": true
+    }
+  }
+```
+
+launch.json
+
+```json
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Launch Program",
+        "program": "${workspaceFolder}/helloworld.ts",
+        "preLaunchTask": "tsc: build - tsconfig.json",
+        "outFiles": ["${workspaceFolder}/out/**/*.js"]
+      }
+    ]
+  }
+```
+
+It does not need ts-node module
+
+### Running in the browser
+
+- security concern - one JS file cannot reference other JS file
+- we will use routers, components and compile/package output to one bundle
+
+Generate new project:
+
+```text
+➜  ts-frontend-practice node --version 
+v16.13.1
+➜  ts-frontend-practice npm init -y
+Wrote to /Users/miroadamy/prj/ts-frontend-practice/package.json:
+
+{
+  "name": "ts-frontend-practice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
+
+```
+
+Added index.html, tsconfig,
+
+Will execute on live server extension - ritwickdey.liveserver
+
+need `.vscode/settings.json`:
+
+```json
+{
+    "liveServer.settings.file": "index.html"
+}
+```
+
+- Go Live button in footer (or use Cmd-L Cmd-O, Live Open)
+- check console - see log there
+
+#### Implement Routing
+
+New file - Router.ts
+
+When referencing, generates: 
+
+```text
+Launcher.js:2 Uncaught ReferenceError: exports is not defined
+    at Launcher.js:2
+```
+
+Security does not allow that
+
+=> need Webpack
+

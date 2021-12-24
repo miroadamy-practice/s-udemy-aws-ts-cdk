@@ -651,6 +651,8 @@ Take folder from build and move it to S3 bucket
 
 Add new class in the backend that deploys: WebAppDeployment
 
+        new BuckeBucketDeployment
+
 ```text
 Stack Space-Finder-Backend (SpaceFinder)
 IAM Statement Changes
