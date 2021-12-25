@@ -3356,7 +3356,7 @@ need `.vscode/settings.json`:
 
 New file - Router.ts
 
-When referencing, generates: 
+When referencing, generates:
 
 ```text
 Launcher.js:2 Uncaught ReferenceError: exports is not defined
@@ -3367,3 +3367,343 @@ Security does not allow that
 
 => need Webpack
 
+#### Webpack
+
+Install more libraries
+
+```text
+➜  ts-frontend-practice git:(master) ✗ npm ls
+ts-frontend-practice@1.0.0 /Users/miroadamy/prj/ts-frontend-practice
+└── (empty)
+
+➜  ts-frontend-practice git:(master) npm i -D typescript ts-node ts-loader
+
+added 100 packages, and audited 101 packages in 11s
+
+11 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+➜  ts-frontend-practice git:(master) ✗ npm ls                               
+ts-frontend-practice@1.0.0 /Users/miroadamy/prj/ts-frontend-practice
+├── ts-loader@9.2.6
+├── ts-node@10.4.0
+└── typescript@4.5.4
+
+
+```
+
+Install webpack
+
+```text
+➜  ts-frontend-practice git:(master) npm i -D webpack webpack-cli @types/webpack
+
+added 49 packages, and audited 150 packages in 5s
+
+18 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+➜  ts-frontend-practice git:(master) ✗ npm ls                                     
+ts-frontend-practice@1.0.0 /Users/miroadamy/prj/ts-frontend-practice
+├── @types/webpack@5.28.0
+├── ts-loader@9.2.6
+├── ts-node@10.4.0
+├── typescript@4.5.4
+├── webpack-cli@4.9.1
+└── webpack@5.65.0
+
+
+```
+
+Need a webpack config file - `webpack.config.ts`
+
+Try `npm run build`
+
+// COMMIT
+
+First attempt:
+
+```text
+➜  ts-frontend-practice git:(master) ✗ npm run build
+
+> ts-frontend-practice@1.0.0 build
+> webpack
+
+asset bundle.js 4.72 KiB [emitted] (name: main)
+./src/Launcher.ts 339 bytes [built] [code generated]
+./src/Router.ts 278 bytes [built] [code generated]
+
+ERROR in /Users/miroadamy/prj/ts-frontend-practice/tsconfig.json
+/Users/miroadamy/prj/ts-frontend-practice/tsconfig.json
+[tsl] ERROR
+      TS6059: File '/Users/miroadamy/prj/ts-frontend-practice/webpack.config.ts' is not under 'rootDir' '/Users/miroadamy/prj/ts-frontend-practice/src'. 'rootDir' is expected to contain all source files.
+  The file is in the program because:
+    Root file specified for compilation
+ts-loader-default_e3b0c44298fc1c14
+
+webpack 5.65.0 compiled with 1 error in 870 ms
+```
+
+Add it to excludes in tsconfig:
+
+It works
+
+```text
+➜  ts-frontend-practice git:(master) ✗ npm run build
+
+> ts-frontend-practice@1.0.0 build
+> webpack
+
+asset bundle.js 4.72 KiB [compared for emit] (name: main)
+./src/Launcher.ts 339 bytes [built] [code generated]
+./src/Router.ts 278 bytes [built] [code generated]
+webpack 5.65.0 compiled successfully in 878 ms
+```
+
+we have bundle.js, it works now
+
+// COMMIT
+
+Add two more components + render => works
+
+// COMMIT
+
+### Decorators
+
+Needs:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "experimentalDecorators": true
+  }
+}
+```
+
+or  `tsc --target ES5 --experimentalDecorators`
+
+can be attached to a class declaration, method, accessor, property, or parameter. Decorators use the form @expression, where expression must evaluate to a function that will be called at runtime with information about the decorated declaration.
+
+See <https://www.typescriptlang.org/docs/handbook/decorators.html>
+
+Test class:
+
+```typescript
+class Manager {
+    
+    @watchChange
+    someProperty: string = '';
+}
+
+function watchChange(target: any, key: any) {
+    console.log(`Target: ${target}`);
+    console.log(`Key: ${key}`);
+
+    let property = target[key];
+
+    const getter = () => {
+        return property;
+    }
+
+    const setter = (newVal: string) => {
+        console.log(`Changing ${key} => from: ${property}, to: ${newVal};`);
+        property = newVal;
+    }
+    
+    Object.defineProperty(target, key, {
+        get: getter,
+        set: setter,
+        configurable: true,
+        enumerable: true
+    } );
+}
+
+const manager: Manager = new Manager();
+
+manager.someProperty = '123';
+manager.someProperty = '456';
+
+
+```
+
+Run
+
+```text
+➜  ts-language-practice node --version
+v16.13.1
+➜  ts-language-practice ts-node Dec.ts 
+Target: [object Object]
+Key: someProperty
+Changing someProperty => from: undefined, to: ;
+Changing someProperty => from: , to: 123;
+Changing someProperty => from: 123, to: 456;
+```
+
+Can be called manually (same function as before)
+
+```typescript
+class Manager2 {
+    
+    //@watchChange
+    someProperty: string = '';
+}
+
+console.log('Direct call');
+
+watchChange(Manager2.prototype, 'someProperty');
+const man2 = new Manager2();
+
+man2.someProperty = 'abc';
+man2.someProperty = 'def';
+---
+Direct call
+Target: [object Object]
+Key: someProperty
+Changing someProperty => from: undefined, to: ;
+Changing someProperty => from: , to: abc;
+Changing someProperty => from: abc, to: def;
+
+```
+
+BUT: if object is created BEFORE, does not work !
+Must execute before / during class definition
+
+```typescript
+console.log('Direct call');
+
+const man2 = new Manager2();
+watchChange(Manager2.prototype, 'someProperty');
+
+man2.someProperty = 'abc';
+man2.someProperty = 'def';
+
+---
+Direct call
+Target: [object Object]
+```
+
+#### Decorator factory
+
+```typescript
+
+// decorator factory pattern
+const demoManager = {
+    someProperty: 'Initial value',
+    otherProp: 'another value'
+}
+
+
+class Manager3 {
+    
+    @linkValue(demoManager)
+    someProperty: string = '';
+}
+
+
+
+
+
+function linkValue(otherObject: any) {
+    return function(target: any, key: string) {
+        let property = target[key];
+
+        const getter = () => {
+            return property;
+        }
+    
+        const setter = (newVal: string) => {
+            console.log(`Changing ${key} => from: ${property}, to: ${newVal};`);
+            property = newVal;
+            otherObject[key] = newVal;
+        }
+        
+        Object.defineProperty(target, key, {
+            get: getter,
+            set: setter,
+            configurable: true,
+            enumerable: true
+        } );
+    }
+}
+
+console.log(`Initial: ${demoManager.someProperty}`);
+
+const mgr = new Manager3();
+
+console.log(`Before: ${demoManager.someProperty}`);
+console.log(`Before: ${mgr.someProperty}`);
+
+mgr.someProperty = 'I was changed in mgr';
+
+console.log(`After: ${demoManager.someProperty}`);
+console.log(`After: ${mgr.someProperty}`);
+
+---
+➜  ts-language-practice git:(master) ✗ ts-node DecFactory.ts
+Initial: Initial value
+Changing someProperty => from: undefined, to: ;
+Before: 
+Before: 
+Changing someProperty => from: , to: I was changed in mgr;
+After: I was changed in mgr
+After: I was changed in mgr
+```
+
+This is important - note that the assignment to empty string wipes out the 'Initial value'
+
+Method decorator example (needed ES2015 because of the async)
+
+```typescript
+function logInvocation(target: Object, propertyKey: string, descriptor: PropertyDescriptor){
+    const className = target.constructor.name;
+    let originalMethod = descriptor.value;
+    descriptor.value = async function(...args: any[]) {
+        console.log(`${className}#${propertyKey} called with ${JSON.stringify(args)}`)
+        const result = await originalMethod.apply(this, args);
+        console.log(`${className}#${propertyKey} returned ${JSON.stringify(result)}`)
+    }
+}
+
+
+export interface IServer {
+
+    startServer(): void
+    stopServer(): void
+}
+
+class Server implements IServer{
+
+    public port: number;
+    public address: string;
+
+    constructor(port: number, address: string){
+        this.port = port;
+        this.address = address;
+    }
+
+    async startServer(){
+        const data = await this.getData(123);
+        console.log(`Starting server at: ${this.address}: ${this.port}`)
+    }
+
+    stopServer(): void {}
+
+    @logInvocation
+    async getData(id: number): Promise<string>{
+        return 'some SPecial Data'
+    }
+
+}
+
+const someServer: IServer = new Server(8080, 'localhost');
+someServer.startServer();
+
+---
+➜  ts-language-practice git:(master) ✗ ts-node DecMethod.ts
+Server#getData called with [123]
+Server#getData returned "some SPecial Data"
+Starting server at: localhost: 8080
+```
